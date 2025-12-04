@@ -1,0 +1,39 @@
+{{> admin-header}}
+{{> admin-sidebar}}
+<div class="admin-container">
+  <h1>Thêm tin tức</h1>
+  <form method="post" action="/admin/news" enctype="multipart/form-data">
+    <label>Tiêu đề</label>
+    <input type="text" name="title" required />
+
+    <label>Tóm tắt</label>
+    <textarea name="summary" rows="3" required></textarea>
+
+    <label>Nội dung</label>
+    <textarea id="editor" name="content" required></textarea>
+
+    <label>Ảnh bìa</label>
+    <input type="file" name="coverImage" accept="image/*" />
+
+    <label>Tags (phân cách bằng dấu phẩy)</label>
+    <input type="text" name="tags" />
+
+    <label>Trạng thái</label>
+    <select name="status">
+      <option value="published">Xuất bản</option>
+      <option value="draft">Nháp</option>
+    </select>
+
+    <button type="submit" class="btn">Lưu</button>
+  </form>
+</div>
+
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<script>
+  CKEDITOR.replace('editor');
+  // Submit CKEditor data
+  document.querySelector('form').addEventListener('submit', function() {
+    for (var instance in CKEDITOR.instances)
+      CKEDITOR.instances[instance].updateElement();
+  });
+</script>

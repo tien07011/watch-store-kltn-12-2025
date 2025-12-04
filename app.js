@@ -25,6 +25,7 @@ const salesRoute = require('./routes/sales_route');
 const coupensRoute = require('./routes/coupen_route');
 const bannerRoute = require('./routes/banner_route');
 const notificationRoute = require('./routes/notification_route');
+const newsRouter = require('./routes/newsRouter');
 
 //user routers 
 const userRouter = require('./routes/userRouter');
@@ -89,6 +90,13 @@ handlebars.registerHelper('checkSatatus', function (status, options) {
   }
 })
 
+// Helpers used by news views
+handlebars.registerHelper('inc', function (v) { return Number(v) + 1; });
+handlebars.registerHelper('dec', function (v) { return Number(v) - 1; });
+handlebars.registerHelper('gt', function (a, b) { return Number(a) > Number(b); });
+handlebars.registerHelper('lt', function (a, b) { return Number(a) < Number(b); });
+handlebars.registerHelper('eq', function (a, b) { return String(a) === String(b); });
+
 app.use(session({
   secret: 'secrekeey',
   resave: false,
@@ -107,6 +115,7 @@ app.use('/cart', cartRouter);
 app.use('/orders', orderRouter);
 app.use('/products', productSearchRouter);
 app.use('/reviews', reviewRouter);
+app.use('/', newsRouter);
 
 
 //admin router

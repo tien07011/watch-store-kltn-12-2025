@@ -20,6 +20,7 @@ const Coupon = require(path.join(__dirname, '..', 'models', 'coupenSchema'));
 const OTP = require(path.join(__dirname, '..', 'models', 'otpModel'));
 const Payment = require(path.join(__dirname, '..', 'models', 'paymentModel'));
 const ReturnReq = require(path.join(__dirname, '..', 'models', 'returnSchema'));
+const News = require(path.join(__dirname, '..', 'models', 'newsModel'));
 
 function listImages(relativeDir) {
   const absolute = path.join(__dirname, '..', 'public', relativeDir);
@@ -43,6 +44,7 @@ async function seed(options = {}) {
     otpCount = 5,
     paymentCount = 12,
     returnCount = 6,
+    newsCount = 8,
     dropExisting = false,
   } = options;
 
@@ -62,11 +64,13 @@ async function seed(options = {}) {
       OTP.deleteMany({}),
       Payment.deleteMany({}),
       ReturnReq.deleteMany({}),
+      News.deleteMany({}),
     ]);
   }
 
   const productImages = listImages('productImages');
   const bannerImages = listImages('banners');
+  const newsImages = listImages('images/news');
 
   // Categories
   const categories = Array.from({ length: categoryCount }, () => ({
@@ -271,6 +275,36 @@ async function seed(options = {}) {
   });
   await ReturnReq.insertMany(returns);
 
+  // News
+  function toSlug(text) {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+  const news = Array.from({ length: newsCount }, () => {
+    const title = fakerVI.lorem.sentence({ min: 3, max: 8 });
+    const cover = (newsImages && newsImages.length)
+      ? fakerVI.helpers.arrayElement(newsImages)
+      : null;
+    return {
+      title,
+      slug: toSlug(title) + '-' + fakerVI.string.alphanumeric(6).toLowerCase(),
+      summary: fakerVI.lorem.sentences({ min: 2, max: 3 }),
+      content: `<p>${fakerVI.lorem.paragraphs({ min: 2, max: 5 }).replace(/\n/g, '</p><p>')}</p>`,
+      coverImage: cover ? `/${cover.replace(/\\/g, '/')}` : undefined,
+      tags: fakerVI.helpers.arrayElements(['khuyến mãi', 'bộ sưu tập', 'mẹo chọn đồng hồ', 'tin công nghệ', 'bảo hành'], fakerVI.number.int({ min: 1, max: 3 })),
+      author: fakerVI.person.fullName(),
+      status: fakerVI.helpers.arrayElement(['published', 'draft']),
+      publishedAt: fakerVI.date.recent({ days: 20 }),
+    };
+  });
+  await News.insertMany(news);
+
   console.log('✅ Seed dữ liệu tiếng Việt đã hoàn tất.');
   await mongoose.connection.close();
 }
@@ -300,6 +334,12 @@ async function seed(options = {}) {
       };
       opts[map[key]] = value;
     }
+  }
+  // Custom arg for news count
+  const newsArg = argv.find(a => a.startsWith('--news='));
+  if (newsArg) {
+    const v = parseInt(newsArg.split('=')[1], 10);
+    if (!Number.isNaN(v)) opts.newsCount = v;
   }
   seed(opts).catch((err) => { console.error('Seed lỗi:', err); process.exit(1); });
 })();

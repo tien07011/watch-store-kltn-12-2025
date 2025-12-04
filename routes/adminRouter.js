@@ -15,6 +15,10 @@ const { render_dharboard,
     update_order_status,
     get_invoice } = require('../controller/admincontroller')
 
+// News admin
+const newsController = require('../controller/newsController');
+const { uploadNews } = require('../middlewares/upload');
+
 
 //admin loign and forget password section
 
@@ -52,5 +56,13 @@ router.get('/logout', (req, res) => {
     res.clearCookie('adminTocken');
     res.redirect('/admin/login')
 })
+
+// News CRUD
+router.get('/news', isAdminloggedIn, newsController.adminList);
+router.get('/news/new', isAdminloggedIn, newsController.newForm);
+router.post('/news', isAdminloggedIn, uploadNews.single('coverImage'), newsController.create);
+router.get('/news/:id/edit', isAdminloggedIn, newsController.editForm);
+router.post('/news/:id', isAdminloggedIn, uploadNews.single('coverImage'), newsController.update);
+router.post('/news/:id/delete', isAdminloggedIn, newsController.remove);
 
 module.exports = router

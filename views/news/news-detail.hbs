@@ -1,0 +1,27 @@
+<section class="container py-4">
+  <article class="news-detail">
+    <header class="mb-3">
+      <h1 class="h3">{{item.title}}</h1>
+      <div class="text-muted">
+        <small>Tác giả: {{item.author}} • {{toDateAndTime item.publishedAt}}</small>
+      </div>
+      {{#if item.tags}}
+        <div class="mt-2">
+          {{#each item.tags}}<span class="badge bg-light text-dark me-1">#{{this}}</span>{{/each}}
+        </div>
+      {{/if}}
+    </header>
+
+    {{#if item.coverImage}}
+      <figure class="mb-3">
+        <img class="img-fluid rounded" src="{{item.coverImage}}" alt="{{item.title}}" />
+      </figure>
+    {{/if}}
+
+    <div class="content lead">{{{item.content}}}</div>
+  </article>
+
+  <div class="mt-4">
+    <a class="btn btn-outline-secondary" href="/news">← Quay lại danh sách</a>
+  </div>
+</section>

@@ -1,0 +1,39 @@
+<section class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">Tin tức</h1>
+    <span class="text-muted">Trang {{page}}/{{totalPages}}</span>
+  </div>
+
+  <div class="row g-3">
+    {{#each items}}
+      <div class="col-12 col-md-6 col-lg-4">
+        <article class="card h-100 shadow-sm">
+          {{#if coverImage}}
+            <a href="/news/{{slug}}" class="ratio ratio-16x9 d-block">
+              <img class="card-img-top object-fit-cover" src="{{coverImage}}" alt="{{title}}" />
+            </a>
+          {{/if}}
+          <div class="card-body">
+            <h2 class="h6 card-title"><a class="text-decoration-none" href="/news/{{slug}}">{{title}}</a></h2>
+            <p class="card-text text-secondary">{{summary}}</p>
+          </div>
+          <div class="card-footer bg-white">
+            <small class="text-muted">{{toDateAndTime publishedAt}}</small>
+          </div>
+        </article>
+      </div>
+    {{/each}}
+  </div>
+
+  <nav class="d-flex justify-content-center mt-4" aria-label="Pagination">
+    <ul class="pagination m-0">
+      <li class="page-item {{#unless (gt page 1)}}disabled{{/unless}}">
+        <a class="page-link" href="/news?page={{dec page}}">« Trang trước</a>
+      </li>
+      <li class="page-item disabled"><span class="page-link">{{page}} / {{totalPages}}</span></li>
+      <li class="page-item {{#unless (lt page totalPages)}}disabled{{/unless}}">
+        <a class="page-link" href="/news?page={{inc page}}">Trang sau »</a>
+      </li>
+    </ul>
+  </nav>
+</section>
