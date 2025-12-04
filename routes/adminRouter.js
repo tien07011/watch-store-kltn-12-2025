@@ -18,6 +18,7 @@ const { render_dharboard,
 // News admin
 const newsController = require('../controller/newsController');
 const { uploadNews } = require('../middlewares/upload');
+const path = require('path');
 
 
 //admin loign and forget password section
@@ -64,5 +65,10 @@ router.post('/news', isAdminloggedIn, uploadNews.single('coverImage'), newsContr
 router.get('/news/:id/edit', isAdminloggedIn, newsController.editForm);
 router.post('/news/:id', isAdminloggedIn, uploadNews.single('coverImage'), newsController.update);
 router.post('/news/:id/delete', isAdminloggedIn, newsController.remove);
+
+// Admin chat page
+router.get('/chat', isAdminloggedIn, (req, res) => {
+    res.render(path.join('admin', 'chat'));
+});
 
 module.exports = router

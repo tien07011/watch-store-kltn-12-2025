@@ -123,5 +123,10 @@
   <script src="/scripts/checkoutScript.js"></script>
   <script src="/scripts/filterScript.js"></script>
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  window.__USER__ = {{#if user}}{{{json user}}}{{else}}null{{/if}};
+  </script>
+<script src="/scripts/chatWidget.js"></script>
 
 </html>

@@ -1,0 +1,111 @@
+const Message = require('../models/messageModel');
+const User = require('../models/userModel');
+const Admin = require('../models/adminModel');
+
+// Get conversation messages between a user and admin
+exports.getConversation = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const limit = Number(req.query.limit || 50);
+    const messages = await Message.find({
+      $or: [
+        { senderId: userId, senderModel: 'User', recipientModel: 'Admin' },
+        { recipientId: userId, recipientModel: 'User', senderModel: 'Admin' },
+      ],
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    res.json({ ok: true, messages: messages.reverse() });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// List users who have messaged (for admin dashboard)
+exports.listConversations = async (req, res, next) => {
+  try {
+    const pipeline = [
+      {
+        $match: {
+          $or: [
+            { senderModel: 'User' },
+            { recipientModel: 'User' },
+          ],
+        },
+      },
+      {
+        $project: {
+          userId: {
+            $cond: [
+              { $eq: ['$senderModel', 'User'] },
+              '$senderId',
+              '$recipientId',
+            ],
+          },
+          createdAt: 1,
+        },
+      },
+      { $group: { _id: '$userId', lastMessageAt: { $max: '$createdAt' } } },
+      { $sort: { lastMessageAt: -1 } },
+    ];
+
+    const convs = await Message.aggregate(pipeline);
+    const users = await User.find({ _id: { $in: convs.map((c) => c._id) } })
+      .select('_id name email')
+      .lean();
+
+    const map = new Map(users.map((u) => [String(u._id), u]));
+    const result = convs.map((c) => ({
+      user: map.get(String(c._id)),
+      lastMessageAt: c.lastMessageAt,
+    }));
+
+    res.json({ ok: true, conversations: result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Post a message (fallback REST; sockets preferred)
+exports.postMessage = async (req, res, next) => {
+  try {
+    const { toUserId, content } = req.body;
+    const isAdmin = Boolean(res.locals.admin);
+
+    if (!content || (!toUserId && !res.locals.userData)) {
+      return res.status(400).json({ ok: false, message: 'Invalid payload' });
+    }
+
+    let senderId, senderModel, recipientId, recipientModel;
+
+    if (isAdmin) {
+      senderId = res.locals.admin._id;
+      senderModel = 'Admin';
+      recipientId = toUserId;
+      recipientModel = 'User';
+    } else {
+      senderId = res.locals.userData._id;
+      senderModel = 'User';
+      // Assuming only chatting with admin (single admin)
+      const admin = await Admin.findOne().select('_id');
+      if (!admin) return res.status(500).json({ ok: false, message: 'Admin not found' });
+      recipientId = admin._id;
+      recipientModel = 'Admin';
+    }
+
+    const msg = await Message.create({
+      senderId,
+      senderModel,
+      recipientId,
+      recipientModel,
+      content,
+    });
+
+    res.json({ ok: true, message: msg });
+  } catch (err) {
+    next(err);
+  }
+};
