@@ -1,0 +1,159 @@
+<div class="container mt-5">
+    <div style="width: 36rem;" class="header d-flex align-items-center justify-content-between">
+        <h3 class="h4 user-text fw-bold mb-3">Manage Addresses</h3>
+        <input id="addAddress" class="btn user-btn" type="button" value="New Address">
+    </div>
+
+    {{!-- add address --}}
+    <form action="/my-account/my-address/new-address" method="post" class=" add-form container">
+        <div class="row">
+            <div class="row col-md-4 me-3">
+                <label for="form">Name</label>
+                <input name="address_cust_name" type="text" class="form-control" required>
+            </div>
+            <div class="row col-md-4">
+                <label for="form">Phone</label>
+                <input name="phone" type="text" class="form-control" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row col-md-4 me-3">
+                <label for="form">House Name</label>
+                <input name="house_name" type="text" class="form-control" required>
+            </div>
+            <div class="row col-md-4">
+                <label for="form">Area/Street</label>
+                <input name="area_street" type="text" class="form-control" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row col-md-4 me-3">
+                <label for="form">Locality</label>
+                <input name="locality" type="text" class="form-control" required>
+            </div>
+            <div class="row col-md-4">
+                <label for="form">Town</label>
+                <input name="town" type="text" class="form-control" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row col-md-4 me-3">
+                <label for="form">State</label>
+                <select class="form-select" name="state">
+                    <option value="india">Select State</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand">Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                    <option value="Chandigarh">Chandigarh</option>
+                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu
+                    </option>
+                    <option value="Lakshadweep">Lakshadweep</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Puducherry">Puducherry</option>
+                </select>
+            </div>
+            <div class="row col-md-4">
+                <label for="form">Pincode</label>
+                <input name="pincode" type="number" class="form-control" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row col-md-4 me-3">
+                <label for="form">Landmark</label>
+                <input name="landmark" type="text" class="form-control" required>
+            </div>
+            <div class="row col-md-4">
+                <label for="form">Alternate Phone</label>
+                <input name="alternate_phone" type="number" class="form-control">
+                <input name="customer_id" type="hidden" value="{{userData._id}}" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" value="HOME" name="address_type" id="flexRadioDefault1"
+                    checked>
+                <label class="form-check-label" for="flexRadioDefault1">
+                    HOME
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" value="WORK" type="radio" name="address_type" id="flexRadioDefault2">
+                <label class="form-check-label" for="flexRadioDefault2">
+                    WORK
+                </label>
+            </div>
+        </div>
+        <div class="row mt-2 mb-3 d-flex ">
+            <input class="btn but col-md-3 user-btn btn-lg" type="submit" />
+            <input class="ml-2 btn col-md-3 but clear-btn btn-lg" type="reset" autocomplete="on" value="Clear" />
+        </div>
+    </form>
+
+
+    {{#each address}}
+    <div class="row card pt-3 mt-2 col-md-8">
+        <div class="headercont d-flex justify-content-between">
+            <div style="width: 5rem;" class="btn btn-sm btn-light">
+                {{this.address_type}}
+            </div>
+            <div class="d-flex">
+                <a style="text-decoration: none;" href="/my-account/my-address/edit-address/{{this._id}}"
+                    class="edit  ms-3 text-primary">Edit</a>
+                <a style="text-decoration: none; cursor:pointer" onclick="delete_Adrs_Alert('{{this._id}}')"
+                    class="edit  ms-3 text-danger">Delete</a>
+            </div>
+        </div>
+        <p class="h5">{{this.address_cust_name}} &emsp; {{this.phone }}</p>
+        <p class="text-normal">
+            {{this.house_name}}(H),
+            {{this.locality}},
+            {{this.area_street}},
+            {{this.landmark}},
+            {{this.state}}
+            <span class="fw-bold">
+                -{{this.pincode}}
+            </span>
+        </p>
+    </div>
+    {{/each}}
+</div>
+
+<script>
+    $(document).ready(() => {
+        $('.add-form').hide();
+        //add new Address form display
+        const addAddress = document.getElementById('addAddress');
+        if (addAddress) {
+            addAddress.addEventListener('click', (e) => {
+                e.preventDefault();
+                $('.add-form').slideDown();
+            })
+        }
+    })
+</script>

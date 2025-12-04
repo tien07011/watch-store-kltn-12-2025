@@ -1,0 +1,260 @@
+<div style="background-color: rgb(243, 243, 243); position:relative"
+    class="outer-container conatiner-fluid vw-100 d-flex">
+    <div style="width: 50rem;" class="container-fluid mt-3 ms-5">
+
+        <div class="header d-flex align-items-center justify-content-between">
+            <h3 class="h4 user-text fw-bold mb-3">Checkout Page</h3>
+            <input id="addAddress" class="btn user-btn" type="button" value="New Address">
+        </div>
+        <div class="header d-flex flex-column align-items-center justify-content-between">
+            {{!-- add address --}}
+            <form action="/my-account/checkout/new-address" method="post" class=" add-form container">
+                <div class="row">
+                    <div class="row col-md-6 me-3">
+                        <label for="form">Name</label>
+                        <input name="address_cust_name" type="text" class="form-control" required>
+                    </div>
+                    <div class="row col-md-6">
+                        <label for="form">Phone</label>
+                        <input name="phone" type="text" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row col-md-6 me-3">
+                        <label for="form">House Name</label>
+                        <input name="house_name" type="text" class="form-control" required>
+                    </div>
+                    <div class="row col-md-6">
+                        <label for="form">Area/Street</label>
+                        <input name="area_street" type="text" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row col-md-6 me-3">
+                        <label for="form">Locality</label>
+                        <input name="locality" type="text" class="form-control" required>
+                    </div>
+                    <div class="row col-md-6">
+                        <label for="form">Town</label>
+                        <input name="town" type="text" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row col-md-6 me-3">
+                        <label for="form">State</label>
+                        <select class="form-select" name="state">
+                            <option value="india">Select State</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and
+                                Daman
+                                and
+                                Diu
+                            </option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Puducherry">Puducherry</option>
+                        </select>
+                    </div>
+                    <div class="row col-md-6">
+                        <label for="form">Pincode</label>
+                        <input name="pincode" type="number" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row col-md-6 me-3">
+                        <label for="form">Landmark</label>
+                        <input name="landmark" type="text" class="form-control" required>
+                    </div>
+                    <div class="row col-md-6">
+                        <label for="form">Alternate Phone</label>
+                        <input name="alternate_phone" type="number" class="form-control">
+                        <input name="customer_id" type="hidden" value="{{userData._id}}" class="form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" value="HOME" name="address_type"
+                            id="flexRadioDefault1" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            HOME
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" value="WORK" type="radio" name="address_type"
+                            id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            WORK
+                        </label>
+                    </div>
+                </div>
+                <div class="row mt-2 mb-3 d-flex ">
+                    <input class="btn but col-md-3 user-btn btn-lg" type="submit" />
+                    <input class="ml-2 btn col-md-3 but clear-btn btn-lg" type="reset" autocomplete="on"
+                        value="Clear" />
+
+                    <a id="upButton" class="btn col-md-1 ms-3 user-btn"><i class="fa-solid fa-angle-up"></i></a>
+
+                </div>
+            </form>
+
+            <form id="orderForm">
+
+                {{#each address}}
+                <div class="address-container d-flex align-items-center">
+                    <div class="form-check me-3">
+                        <input id="addressInput" class="form-check-input" type="radio" name="address"
+                            value="{{this._id}}" name="flexRadioDefault" required>
+                    </div>
+                    <div class="row card pt-3 mt-2 col-md-12">
+                        <div class="headercont d-flex justify-content-between">
+                            <div style="width: 5rem;" class="btn btn-sm btn-light">
+                                {{this.address_type}}
+                            </div>
+                        </div>
+                        <p class="h5">{{this.address_cust_name}} &emsp; {{this.phone }}</p>
+                        <p class="text-normal">
+                            {{this.house_name}}(H),
+                            {{this.locality}},
+                            {{this.area_street}},
+                            {{this.landmark}},
+                            {{this.state}}
+                            <span class="fw-bold">
+                                -{{this.pincode}}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                {{/each}}
+
+                <input id="proceedPayment" class="btn user-btn mb-5" type="button" value="continue to payment">
+                <div class="payment-options">
+                    <div class="user-text h6 mb-2">Payment Options</div>
+                    <div class="form-check">
+                        <input class="form-check-input" value="COD" type="radio" name="payment_method" id="" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Cash On Delivery
+                        </label>
+                    </div>
+                    {{#if wallet}}
+                    <div class="form-check">
+                        <input class="form-check-input" value="wallet" type="radio" name="payment_method" id="" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Times Cart Wallet (₹{{user.user_wallet}})
+                        </label>
+                    </div>
+                    {{/if}}
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" value="Online Payment" type="radio" name="payment_method" id="">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Online Payment
+                        </label>
+                    </div>
+                    <input type="hidden" id="price" name="price" value="{{totalAmount}}">
+                    <input type="hidden" id="discount" name="discount" value="">
+                    <input type="hidden" id="coupen" name="coupen" value="">
+                    <input type="hidden" id="coupen_code" name="coupen_code" value="">
+                    <button style="padding: 0.5rem 20rem;" class="btn user-btn mb-5" id="submitOrder">Place
+                        Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-4 mt-3 ms-3">
+        <div role="button" id="checkCoupen" class=" card user-text p-2 bg-light">
+            <h4 class="mt-1"><i class="fa-solid ms-3 fa-tags"></i> Check Coupen?</h4>
+        </div>
+        <div class="card mt-3 mb-4">
+            <div class="card-header py-3">
+                <h5 class="mb-0">Summary</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                        Products ({{cart.length}})
+                        <span>₹{{totalAmount}}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        Shipping(free)
+                        <span>₹ 0</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        Discount:
+                        <span id="showDiscount">0%</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                        <div>
+                            <strong>Total amount</strong>
+                            <strong>
+                                <p class="mb-0">(including All taxes)</p>
+                            </strong>
+                        </div>
+                        <span><strong>₹{{totalAmount}}</strong></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="coupenss bg-light p-3 card">
+        <i style="margin-left: 26rem;" id="back" role="button" class="fa-regular fa-circle-xmark mb-2 text-danger"></i>
+        {{#each coupens}}
+        <div class="card p-2 mb-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <input type="button" value="{{this.coupon_code}}" class=" btn btn-sm bg-warning" role="button">
+                <a class="text-decoraton-none fw-bold text-primary" role="button"
+                    onclick="applayCoupen('{{this._id}}')">Apply</a>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="text-success fw-bold">Discount: {{this.discount}}% </p>
+                <p class="fw-bold text-secondary">EXP: {{this.exp_date}}<br>
+                    <span class="fw-bold text-secondary">Min: ₹{{this.min_amount}}</span>
+                </p>
+            </div>
+            <p class="text-secondary description fw-normal">{{this.discription}} </p>
+            <div role="button" class="text-primary know-more h6">show more</div>
+            <div role="button" class="text-primary know-less h6">show less</div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<style>
+    .coupenss {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 4;
+        width: 30rem;
+        box-shadow: 0px 0px 20px #ccc;
+    }
+</style>

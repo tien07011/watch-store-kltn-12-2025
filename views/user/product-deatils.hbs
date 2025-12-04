@@ -1,0 +1,137 @@
+<style>
+  ::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+    background: #d9d9d9;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #8fd4ff;
+    -webkit-border-radius: 1ex;
+  }
+</style>
+<!-- content -->
+<section class="py-5">
+  <div class="container">
+    <div class="row gx-5">
+      <aside class="col-lg-6">
+        <div id="image-container" role="button"
+          class="border image-container rounded-4 mb-3 d-flex justify-content-center">
+          {{#if product.wish}}
+          <i id="heart{{product._id}}" class="fa-regular add-to-wish-list-btn fa-2x fa-heart"
+            onclick="addToWishlist('{{product._id}}')" role="button"></i>
+          {{else}}
+          <i id="heart{{product._id}}" class="fa-solid text-danger add-to-wish-list-btn fa-2x fa-heart"
+            onclick="addToWishlist('{{product._id}}')" role="button"></i>
+          {{/if}}
+          <img style="max-width: 80%; max-height: 90vh;" id="primary-img-view" class="rounded-4 fit primaryIMG"
+            src="/productImages/{{product.primary_image.name}}" />
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+          {{#each product.secondary_images}}
+          <img width="60" height="60" role="button" id="secondary_img{{this._id}}" onclick="changeImage('{{this._id}}')"
+            class="border m-1 rounded-2" src="/productImages/{{this.name}}" />{{/each}}
+        </div>
+      </aside>
+      <main class="col-lg-6">
+        <div class="ps-lg-3">
+          <h4 class="title text-dark">
+            {{product.product_name}} ({{avarage}}<i class="fa-solid fa-star text-warning"></i>)
+          </h4>
+          <div class="d-flex flex-row my-3">
+
+            <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i> Only {{product.stock}}
+              left</span>
+            <span class="text-success ms-2">In stock</span>
+          </div>
+          <span class="h5">₹{{product.selling_price}}</span>
+          <p>
+            {{product.description}}
+          </p>
+          <div class="row">
+            <dt class="col-3">Color</dt>
+            <dd class="col-9">{{product.color}}</dd>
+
+            <dt class="col-3">Brand</dt>
+            <dd class="col-9">{{product.brand_name}}</dd>
+          </div>
+          <hr />
+
+          <a onclick="addToCart('{{product._id}}')" class="btn btn-warning shadow-0"> Buy now </a>
+          <a onclick="addToCart('{{product._id}}')" class="btn btn-primary shadow-0"> <i
+              class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+          <a onclick="addToWishlist('{{product._id}}')"
+            class="btn btn-light border border-secondary py-2 icon-hover px-3">
+            <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+        </div>
+        <div class="col-lg-12 d-flex justify-content-between align-items-center bg-light border mt-3 rounded">
+          <h6 class="mt-1">Reviews & rating</h6>
+          <i role="button" class="fa-solid reviewDown fa-caret-down"></i>
+          <i role="button" class="fa-solid reviewup fa-caret-up"></i>
+        </div>
+        <div class="reviews p-2 bg-light border rounded mt-2" style="max-height:150px;overflow-y:auto">
+          {{#each ratings}}
+          <div class="card px-2 py-1 mt-2 ">
+            <div class="card-title d-flex align-items-center  ">
+              <p class="h5 me-3 ">{{this.user.user_name}}</p>
+              <div class="h5 mt-1 me-2">{{this.rating}}</div>
+              <i class="fa-solid fa-sm text-warning fa-star"></i>
+            </div>
+            <p style="margin-top:-20px;">{{this.comment}}</p>
+          </div>
+          {{/each}}
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+<!-- content -->
+
+<script>
+  $(document).ready(() => {
+
+
+    let zoom_area = document.getElementById('image-container')
+    let zoom_img = document.getElementById('primary-img-view');
+    zoom_area.addEventListener('mousemove', (event) => {
+      clientX = event.clientX - zoom_area.offsetLeft
+      clientY = event.clientY - zoom_area.offsetTop
+      mWidth = zoom_area.offsetWidth
+      mHeight = zoom_area.offsetHeight
+      clientX = clientX / mWidth * 100
+      clientY = clientY / mHeight * 100
+      zoom_img.style.transform = 'translate(-' + clientX + '%,-' + clientY + '%) scale(2)'
+    })
+    zoom_area.addEventListener('mouseleave', () => {
+      zoom_img.style.transform = 'translate(-50%,-50%) scale(1)'
+    });
+
+
+    //change image function
+    changeImage = (img) => {
+      let secondary_image = document.getElementById(`secondary_img${img}`);
+      let temp = secondary_image.src;
+      secondary_image.src = zoom_img.src;
+      zoom_img.src = temp
+
+    }
+
+    $('.reviewup').hide();
+    $('.reviews').hide();
+
+    $('.reviewDown').on('click', () => {
+      $('.reviewup').show();
+      $('.reviews').slideDown();
+      $('.reviewDown').hide();
+    })
+    $('.reviewup').on('click', () => {
+      $('.reviewup').hide();
+      $('.reviewDown').show();
+      $('.reviews').slideUp();
+    })
+
+
+
+
+  });
+</script>

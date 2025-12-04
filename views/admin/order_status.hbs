@@ -1,0 +1,78 @@
+<section class="container-fluid mt-5">
+
+    <div class="header d-flex justify-content-between">
+        <h3 class="h3 text-second fw-bold mb-3">Order Details</h3>
+    </div>
+
+    <form class="card px-3 py-3" action="/admin/changeStatus/{{showOrder._id}}" method="post">
+        <div class="row">
+            <div class=" col-md-4">
+                <label for="form-control">Name</label>
+                <input type="text" value="{{showOrder.user.user_name}}" class="form-control" readonly>
+            </div>
+            <div class="col-md-8">
+                <label for="form-control">Address</label>
+                <input type="text"
+                    value="{{showOrder.address.address_cust_name}}, {{showOrder.address.house_name}}(H), {{showOrder.address.town}}, {{showOrder.address.state}}, Pin:{{showOrder.address.pincode}},PH:{{showOrder.address.phone}}"
+                    class="form-control" readonly>
+            </div>
+            <div class=" col-md-6">
+                <label for="form-control">Product Name</label>
+                <input type="text" value="{{showOrder.product.product_name}}" class="form-control" readonly>
+            </div>
+            <div class=" col-md-6">
+                <label for="form-control">Quantity</label>
+                <input type="text" value="{{showOrder.items.quantity}}" class="form-control" readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="form-control">Payment Method</label>
+                <input type="text" c value="{{showOrder.payment_method}}" class="form-control " readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="form-control">Price</label>
+                <input type="hidden" name="product_id" value="{{showOrder.items.product_id}}">
+                <input type="text" c value="{{showOrder.items.price}}" class="form-control " readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="form-control">Status</label>
+                {{#if showOrder.items.cancelled_on}}
+                <input type="text" c value="{{showOrder.items.status}}" class="form-control " readonly>
+                {{/if}}
+                {{#if showOrder.items.pending}}
+                <input type="text" c value="{{showOrder.items.status}}" class="form-control " readonly>
+                {{else}}
+                <select name="status" class="form-select" id="">
+                    {{!-- showOrder.items.delivered = false;
+                    showOrder.items.pending = false;
+                    showOrder.items.out_forDelivery = true;
+                    showOrder.items.shipped = false;
+                    showOrder.items.confirmed = false; --}}
+                    {{#if showOrder.items.confirmed}}
+                    <option value="Shipped">Shipped</option>
+                    {{/if}}
+                    {{#if showOrder.items.shipped}}
+                    <option value="Out for Delivery">Out for Delivery</option>
+                    {{/if}}
+                    {{#if showOrder.items.out_forDelivery}}
+                    <option value="Delivered">Delivered</option>
+                    {{/if}}
+                </select>
+            </div>
+            {{/if}}
+            <div class="col-md-6">
+                {{#if showOrder.items.cancelled_on}}
+                <a href="/admin/orders"><input type="none" value="back to orders" class="form-control mt-2 btn add-btn "
+                        readonly></a>
+                {{/if}}
+                {{#if showOrder.items.pending}}
+                <a href="/admin/orders"><input type="none" value="back to orders" class="form-control mt-2 btn add-btn "
+                        readonly></a>
+                {{else}}
+                <label for="form-control "></label>
+                <input type="submit" value="Update Status" class="form-control mt-2 btn add-btn ">
+                {{/if}}
+            </div>
+        </div>
+        </div>
+    </form>
+</section>
