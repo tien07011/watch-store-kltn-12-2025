@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const { fakerVI } = require('@faker-js/faker');
+const bcrypt = require('bcrypt');
 
 const connect = require(path.join(__dirname, '..', 'config', 'dbConnection'));
 
@@ -72,6 +73,9 @@ async function seed(options = {}) {
   const bannerImages = listImages('banners');
   const newsImages = listImages('images/news');
 
+  // Precompute a known bcrypt hash for password "123456"
+  const defaultPasswordHash = bcrypt.hashSync('123456', 10);
+
   // Categories
   const categories = Array.from({ length: categoryCount }, () => ({
     cat_name: fakerVI.commerce.department(),
@@ -130,7 +134,7 @@ async function seed(options = {}) {
     user_name: fakerVI.person.fullName(),
     user_email: fakerVI.internet.email({ provider: 'gmail.com' }),
     user_mobile: '0' + fakerVI.number.int({ min: 900000000, max: 989999999 }),
-    user_password: '$2b$10$XbK0bWJr6g2fC0fS3GMZMe0Zl4xQk9mI1oJm8q6r5wCqH2xCjNw72',
+    user_password: defaultPasswordHash,
     user_status: true,
     is_delete: false,
     user_wallet: 0,
@@ -217,7 +221,7 @@ async function seed(options = {}) {
     last_name: fakerVI.person.lastName(),
     email: fakerVI.internet.email({ provider: 'company.vn' }),
     mobile: '0' + fakerVI.number.int({ min: 900000000, max: 989999999 }),
-    password: '$2b$10$XbK0bWJr6g2fC0fS3GMZMe0Zl4xQk9mI1oJm8q6r5wCqH2xCjNw72',
+    password: defaultPasswordHash,
   }));
   const createdAdmins = await Admin.insertMany(admins);
 
