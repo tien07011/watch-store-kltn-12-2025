@@ -8,20 +8,20 @@
     {{!-- Hide nav actions on checkout if needed --}}
     {{else}}
     <div class="nav-links">
-      <a href="/products">Watches</a>
-      <a href="/products/?&category=Men%20Watches">Mens</a>
-      <a href="/products/?&category=Womens%20Watches">Womens</a>
-      <a href="/news">News</a>
+      <a href="/products">Đồng hồ</a>
+      <a href="/products/?&category=Men%20Watches">Nam</a>
+      <a href="/products/?&category=Womens%20Watches">Nữ</a>
+      <a href="/news">Tin tức</a>
     </div>
 
     <form class="search d-flex align-items-center" action="/products" method="get" style="gap:.5rem;">
       <a id="querry" href="/products/?search="><i onclick="searchProduct()" class="fa-brands fa-searchengin"></i></a>
-      <input id="searchInput" name="search" class="search-box" type="search" placeholder="Search" aria-label="Search" />
+      <input id="searchInput" name="search" class="search-box" type="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm" />
     </form>
 
     <div class="nav-actions" style="font-size:1.25rem;">
       <a class="icon-btn" href="/my-account/wishlist" aria-label="Wishlist"><i class="fa-solid fa-heart"></i></a>
-      <a class="icon-btn position-relative" href="/cart" aria-label="Cart">
+      <a class="icon-btn position-relative" href="/cart" aria-label="Giỏ hàng">
         <i class="fa-solid fa-cart-shopping"></i>
         <span id="cartCount" class="position-absolute translate-middle badge rounded-pill bg-success" style="top:6px; right:4px;">{{cartCount}}</span>
       </a>
@@ -32,17 +32,17 @@
           <div class="dropdown-title">Account Details</div>
           <div class="d-flex flex-column mt-2">
             <a class="blue-secondary px-2 py-2" href="/my-account"><i class="fa-solid fa-user me-2"></i>My Account</a>
-            <a class="blue-secondary px-2 py-2" href="/cart"><i class="fa-solid fa-cart-shopping me-2"></i>My Cart</a>
-            <a class="blue-secondary px-2 py-2" href="/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Order history</a>
+            <a class="blue-secondary px-2 py-2" href="/cart"><i class="fa-solid fa-cart-shopping me-2"></i>Giỏ hàng của tôi</a>
+            <a class="blue-secondary px-2 py-2" href="/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Lịch sử đơn hàng</a>
             <a class="blue-secondary px-2 py-2" href="/my-account/wishlist"><i class="fa-solid fa-heart me-2"></i>My Wish List</a>
           </div>
           {{#if userData}}
           <div class="account d-flex justify-content-center align-items-center mt-2">
-            <a class="px-4 py-1" href="/logout">Logout</a>
+            <a class="px-4 py-1" href="/logout">Đăng xuất</a>
           </div>
           {{else}}
           <div class="account d-flex justify-content-center align-items-center mt-2">
-            <a class="px-4 py-1" href="/login">Login/SignUp</a>
+            <a class="px-4 py-1" href="/login">Đăng nhập/Đăng ký</a>
           </div>
           {{/if}}
         </div>
