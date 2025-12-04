@@ -87,14 +87,16 @@
   {{#if fullscreen}}
   {{{body}}}
   {{else}}
-  <div class="container-fluid justify-content-between d-flex">
+  <div class="container section justify-content-between d-flex" style="gap: 1rem; align-items: flex-start;">
     {{#if Admin}}
     {{>admin-sidebar}}
     {{/if}}
     {{#if User}}
     {{>user-sidebar}}
     {{/if}}
-    {{{body}}}
+    <main class="card card-pad" style="flex:1; min-width:0;">
+      {{{body}}}
+    </main>
   </div>
   {{/if}}
 
