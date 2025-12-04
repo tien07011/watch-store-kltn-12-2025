@@ -1,92 +1,74 @@
-<div class="row">
-    <div class="col-md-3" style="width: 90vw;">
-        <div role="button" class="all-product bg-light border rounded px-3 py-2 h5"><a href="/products"
-                class="text-secondary text-decoration-none">All Products</a></div>
-        <div role="button" class="border Showcategory rounded px-3 py-2 d-flex justify-content-between h5">Category
-            <i role="button" class="fa-solid fa-caret-down"></i>
-        </div>
-        <div class="p-2 category rounded border">
+<div class="container section" style="display:grid; grid-template-columns: 260px 1fr; gap: 1.25rem;">
+    <aside>
+        <div class="card card-pad">
+            <div class="h5 fw-bold mb-2">Filters</div>
+            <div class="mb-2"><a href="/products" class="btn btn-outline" style="width:100%">All Products</a></div>
 
-            {{#each categories}}
-            <div class="ms-2 form-check">
-                <input role="button" class="filter-button" type="checkbox" value="category={{this.cat_name}}"
-                    id="category={{this.cat_name}}">
-                <label role="button" class="form-check-label" for="category={{this.cat_name}}">
-                    {{this.cat_name}}
-                </label>
-            </div>
-            {{/each}}
-        </div>
-        <div role="button" class="border Showbrand rounded mt-2 px-3 py-2 d-flex justify-content-between h5">Brand
-            <i role="button" class="fa-solid fa-caret-down"></i>
-        </div>
-        <div class="p-2 brand rounded border">
-
-            {{#each Brands}}
-            <div class="ms-2 form-check">
-                <input role="button" class="filter-brand" type="checkbox" value="brand={{this}}" id="brand={{this}}">
-                <label role="button" class="form-check-label" for="brand={{this}}">
-                    {{this}}
-                </label>
-            </div>
-            {{/each}}
-        </div>
-        <div role="button" class="border Showcolor rounded mt-2 px-3 py-2 d-flex justify-content-between h5">Color
-            <i role="button" class="fa-solid fa-caret-down"></i>
-        </div>
-        <div class="p-2 color rounded border">
-
-            {{#each Colors}}
-            <div class="ms-2 form-check">
-                <input role="button" class="filter-color" type="checkbox" value="color={{this}}" id="color={{this}}">
-                <label role="button" class="form-check-label" for="color={{this}}">
-                    {{this}}
-                </label>
-            </div>
-            {{/each}}
-        </div>
-    </div>
-    <div class="col-md-9">
-        <div style="width: 30rem;" class="sort-container d-flex justify-content-between aligh-items-center">
-            <p class="h5 fw-bold">Sort: </p>
-            <div>
-                <p role="button" onclick="sorting('sort=low-high')" class="h6 mt-1">Price low-high</p>
-            </div>
-            <div>
-                <p role="button" onclick="sorting('sort=high-low')" class="h6 mt-1">Price high-low</p>
-            </div>
-            <div>
-                <p role="button" onclick="sorting('sort=new-first')" class="h6 mt-1">New First</p>
-            </div>
-        </div>
-        {{#each Products}}
-        <section style="width: 70vw;" class="card py-2 mb-2">
-            <div class="img-wrapper d-flex">
-                <img style="width: 12rem;" class="card-img" src="/productImages/{{this.primary_image.name}}" alt="">
-                <div class="card-body">
-                    <h4 class="card-title">{{this.product_name}}</h4>
-                    <h6 style="font-size: 0.8rem;" class="card-subtitle mb-2 text-muted">Color: {{this.color}} &#160;
-                        &#160; &#160; &#160;
-                        Brand: {{this.brand_name}}
-                    </h6>
-                    <div class="price text-success">
-                        <h5 class="mt-4">₹{{this.selling_price}}</h5>
-                    </div>
-                    <button onclick="addToCart('{{this._id}}')" role="button" type="button" class="btn add-btn">add
-                        to cart</button>
-
+            <div class="form-group">
+                <div class="h6">Category</div>
+                <div class="stack-sm" style="flex-direction:column;">
+                    {{#each categories}}
+                    <label class="stack-sm" style="align-items:center;">
+                        <input role="button" class="filter-button" type="checkbox" value="category={{this.cat_name}}" id="category={{this.cat_name}}" />
+                        <span>{{this.cat_name}}</span>
+                    </label>
+                    {{/each}}
                 </div>
             </div>
 
-            {{#if this.wish}}
-            <i id="heart{{this._id}}" class="fa-regular add-to-wish-list-btn fa-2x fa-heart"
-                onclick="addToWishlist('{{this._id}}')" role="button"></i>
-            {{else}}
-            <i id="heart{{this._id}}" class="fa-solid text-danger add-to-wish-list-btn fa-2x fa-heart"
-                onclick="addToWishlist('{{this._id}}')" role="button"></i>
-            {{/if}}
+            <div class="form-group">
+                <div class="h6">Brand</div>
+                <div class="stack-sm" style="flex-direction:column;">
+                    {{#each Brands}}
+                    <label class="stack-sm" style="align-items:center;">
+                        <input role="button" class="filter-brand" type="checkbox" value="brand={{this}}" id="brand={{this}}" />
+                        <span>{{this}}</span>
+                    </label>
+                    {{/each}}
+                </div>
+            </div>
 
-        </section>
-        {{/each}}
-    </div>
+            <div class="form-group">
+                <div class="h6">Color</div>
+                <div class="stack-sm" style="flex-direction:column;">
+                    {{#each Colors}}
+                    <label class="stack-sm" style="align-items:center;">
+                        <input role="button" class="filter-color" type="checkbox" value="color={{this}}" id="color={{this}}" />
+                        <span>{{this}}</span>
+                    </label>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="card card-pad" style="margin-bottom:1rem; display:flex; align-items:center; gap:1rem;">
+            <div class="h6" style="margin:0;">Sort:</div>
+            <button role="button" onclick="sorting('sort=low-high')" class="btn btn-outline">Price low-high</button>
+            <button role="button" onclick="sorting('sort=high-low')" class="btn btn-outline">Price high-low</button>
+            <button role="button" onclick="sorting('sort=new-first')" class="btn btn-outline">New First</button>
+        </div>
+
+        <div class="product-grid">
+            {{#each Products}}
+            <div class="product-card">
+                <a href="/view_product/{{this._id}}" class="product-media">
+                    <img src="/productImages/{{this.primary_image.name}}" alt="{{this.product_name}}" />
+                </a>
+                <div class="product-body">
+                    <div class="product-title">{{this.product_name}}</div>
+                    <div class="stack-sm" style="justify-content:space-between;">
+                        <span class="muted">{{this.brand_name}}</span>
+                        <span class="product-price">₹{{this.selling_price}}</span>
+                    </div>
+                    <div class="product-actions">
+                        <button onclick="addToCart('{{this._id}}')" class="btn btn-primary">Add to cart</button>
+                        <a href="/view_product/{{this._id}}" class="btn btn-outline">View</a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </main>
 </div>

@@ -1,27 +1,30 @@
 :root {
-  /* Core palette */
-  --background: #f3f6fb;
-  --surface: #ffffff;
-  --text-color: #0f172a; /* slate-900 */
-  --muted-text: #475569; /* slate-600 */
-  --primary: #0ea5a4; /* teal-500 */
-  --primary-dark: #0a8c8b;
-  --secondary: #0066b0;
-  --accent: #f59e0b; /* amber-500 */
-  --danger: #ef4444; /* red-500 */
-  --success: #22c55e; /* green-500 */
-  --border: #e2e8f0; /* slate-200 */
-  --ring: #bae6fd; /* sky-200 */
+  /* Minimal Luxury palette */
+  --background: #f7f7f7; /* subtle gray page background */
+  --surface: #ffffff; /* cards, nav, modals */
+  --text-color: #111827; /* near-black */
+  --muted-text: #6b7280; /* muted copy */
+  --brand-black: #0b0b0b;
+  --brand-gold: #c2a661; /* soft gold accent */
+  --brand-red: #d0021b; /* subtle red accent (Tissot vibe), used sparingly */
+  --primary: var(--brand-gold);
+  --primary-dark: #a88f53;
+  --secondary: #111111; /* links, headings emphasis */
+  --accent: var(--brand-gold);
+  --danger: #ef4444;
+  --success: #22c55e;
+  --border: #e5e7eb;
+  --ring: #eae3cf; /* gold-tinted focus */
 
   /* Typography & spacing */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.12);
-  --shadow-lg: 0 20px 30px rgba(15, 23, 42, 0.15);
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
+  --shadow-md: 0 6px 16px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 20px 30px rgba(17, 24, 39, 0.12);
 }
 
 /* Reset & base */
@@ -126,6 +129,14 @@ p { color: var(--muted-text); margin: 0 0 1rem 0; }
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .nav-actions { display: flex; align-items: center; gap: .75rem; }
+.nav-links { display: flex; align-items: center; gap: 1.25rem; font-weight: 600; }
+.nav-links a { color: var(--secondary); text-decoration: none; }
+.nav-links a:hover { color: var(--text-color); }
+.brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; color: var(--secondary); text-decoration: none; }
+.icon-btn { display:inline-flex; align-items:center; justify-content:center; width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); }
+.icon-btn:hover { background: #fafafa; }
+.dropdown-panel { position: absolute; right: 0; top: calc(100% + 10px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-md); width: 260px; padding: .75rem; }
+.dropdown-title { background: var(--primary); color: #fff; border-radius: var(--radius-sm); padding: .4rem .75rem; font-weight: 600; }
 
 /* Search */
 .search-box {
@@ -225,96 +236,3 @@ p { color: var(--muted-text); margin: 0 0 1rem 0; }
 .wallet-history::-webkit-scrollbar { width: 7px; background-color: #e5e7eb; border-radius: 10px; }
 .wallet-history::-webkit-scrollbar-thumb { background: #2d6b5e; border-radius: 10px; }
 
-.blue-secondary {
-  color: var(--text-color);
-  font-size: 1.2rem;
-  font-family: Roboto;
-}
-.button-cancel {
-  background-color: var(--background) !important;
-}
-
-.add-btn {
-  background-color: var(--text-color) !important;
-  color: var(--white) !important;
-  cursor: pointer !important;
-}
-.text-second {
-  color: var(--text-color) !important;
-}
-
-.ladels a {
-  text-decoration: none;
-  color: var(--text-color);
-}
-.search a {
-  color: var(--text-color);
-  font-size: 1.5rem;
-}
-
-body {
-  position: relative;
-}
-.user-nav {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  background-color: var(--white);
-}
-.search-box {
-  background-color: var(--background);
-  border-radius: 5px;
-  width: 20rem;
-  border: none;
-  padding: 5px;
-  outline: var(--text-color);
-}
-.prof-div {
-  z-index: 6;
-  right: 4.5rem;
-  top: 3rem;
-}
-.account,
-.account a {
-  background: var(--user-backhround);
-  color: var(--white) !important;
-  text-decoration: none !important;
-}
-
-.image-container {
-  width: 500px;
-  height: 500px;
-  position: relative;
-  overflow: hidden;
-}
-#primary-img-view {
-  width: fit-content;
-  min-width: 200px;
-  position: absolute;
-  left: 50%;
-  right: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.add-to-wish-list-btn {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  font-size: 25px;
-  z-index: 2;
-}
-.wallet-history {
-  max-height: 170px;
-  overflow-y: scroll;
-  padding: 10px;
-}
-.wallet-history::-webkit-scrollbar {
-  width: 7px;
-  background-color: rgb(173, 173, 173);
-  border-radius: 10px;
-}
-.wallet-history::-webkit-scrollbar-thumb {
-  background: #2d6b5e;
-  border-radius: 10px;
-}

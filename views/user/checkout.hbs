@@ -1,10 +1,9 @@
-<div style="background-color: rgb(243, 243, 243); position:relative"
-    class="outer-container conatiner-fluid vw-100 d-flex">
-    <div style="width: 50rem;" class="container-fluid mt-3 ms-5">
+<div class="outer-container container-fluid" style="position:relative;">
+    <div class="container mt-3">
 
         <div class="header d-flex align-items-center justify-content-between">
-            <h3 class="h4 user-text fw-bold mb-3">Checkout Page</h3>
-            <input id="addAddress" class="btn user-btn" type="button" value="New Address">
+            <h3 class="h4 fw-bold mb-3">Checkout</h3>
+            <input id="addAddress" class="btn btn-outline" type="button" value="New Address">
         </div>
         <div class="header d-flex flex-column align-items-center justify-content-between">
             {{!-- add address --}}
@@ -117,11 +116,10 @@
                     </div>
                 </div>
                 <div class="row mt-2 mb-3 d-flex ">
-                    <input class="btn but col-md-3 user-btn btn-lg" type="submit" />
-                    <input class="ml-2 btn col-md-3 but clear-btn btn-lg" type="reset" autocomplete="on"
-                        value="Clear" />
+                    <input class="btn btn-primary col-md-3 btn-lg" type="submit" />
+                    <input class="ms-2 btn btn-outline col-md-3 btn-lg" type="reset" autocomplete="on" value="Clear" />
 
-                    <a id="upButton" class="btn col-md-1 ms-3 user-btn"><i class="fa-solid fa-angle-up"></i></a>
+                    <a id="upButton" class="btn btn-outline col-md-1 ms-3"><i class="fa-solid fa-angle-up"></i></a>
 
                 </div>
             </form>
@@ -156,9 +154,9 @@
                 <hr>
                 {{/each}}
 
-                <input id="proceedPayment" class="btn user-btn mb-5" type="button" value="continue to payment">
+                <input id="proceedPayment" class="btn btn-outline mb-3" type="button" value="Continue to payment">
                 <div class="payment-options">
-                    <div class="user-text h6 mb-2">Payment Options</div>
+                    <div class="h6 mb-2">Payment Options</div>
                     <div class="form-check">
                         <input class="form-check-input" value="COD" type="radio" name="payment_method" id="" checked>
                         <label class="form-check-label" for="flexRadioDefault1">
@@ -183,8 +181,7 @@
                     <input type="hidden" id="discount" name="discount" value="">
                     <input type="hidden" id="coupen" name="coupen" value="">
                     <input type="hidden" id="coupen_code" name="coupen_code" value="">
-                    <button style="padding: 0.5rem 20rem;" class="btn user-btn mb-5" id="submitOrder">Place
-                        Order</button>
+                    <button class="btn btn-primary mb-5" id="submitOrder" style="width:100%;">Place Order</button>
                 </div>
             </form>
         </div>
@@ -225,11 +222,11 @@
         </div>
     </div>
     <div class="coupenss bg-light p-3 card">
-        <i style="margin-left: 26rem;" id="back" role="button" class="fa-regular fa-circle-xmark mb-2 text-danger"></i>
+        <i style="position:absolute; right:12px; top:8px;" id="back" role="button" class="fa-regular fa-circle-xmark mb-2 text-danger"></i>
         {{#each coupens}}
         <div class="card p-2 mb-2">
             <div class="d-flex justify-content-between align-items-center">
-                <input type="button" value="{{this.coupon_code}}" class=" btn btn-sm bg-warning" role="button">
+                <input type="button" value="{{this.coupon_code}}" class=" btn btn-sm btn-primary" role="button">
                 <a class="text-decoraton-none fw-bold text-primary" role="button"
                     onclick="applayCoupen('{{this._id}}')">Apply</a>
             </div>
@@ -254,7 +251,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 4;
-        width: 30rem;
+        width: min(32rem, 95vw);
         box-shadow: 0px 0px 20px #ccc;
     }
 </style>

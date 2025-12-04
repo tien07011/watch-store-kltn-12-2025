@@ -24,7 +24,7 @@
           <i id="heart{{product._id}}" class="fa-solid text-danger add-to-wish-list-btn fa-2x fa-heart"
             onclick="addToWishlist('{{product._id}}')" role="button"></i>
           {{/if}}
-          <img style="max-width: 80%; max-height: 90vh;" id="primary-img-view" class="rounded-4 fit primaryIMG"
+          <img id="primary-img-view" class="rounded-4 fit primaryIMG"
             src="/productImages/{{product.primary_image.name}}" />
         </div>
         <div class="d-flex justify-content-center mb-3">
@@ -44,7 +44,7 @@
               left</span>
             <span class="text-success ms-2">In stock</span>
           </div>
-          <span class="h5">₹{{product.selling_price}}</span>
+          <span class="h5 text-second">₹{{product.selling_price}}</span>
           <p>
             {{product.description}}
           </p>
@@ -57,19 +57,18 @@
           </div>
           <hr />
 
-          <a onclick="addToCart('{{product._id}}')" class="btn btn-warning shadow-0"> Buy now </a>
-          <a onclick="addToCart('{{product._id}}')" class="btn btn-primary shadow-0"> <i
+          <a onclick="addToCart('{{product._id}}')" class="btn btn-primary"> Buy now </a>
+          <a onclick="addToCart('{{product._id}}')" class="btn btn-outline"> <i
               class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
-          <a onclick="addToWishlist('{{product._id}}')"
-            class="btn btn-light border border-secondary py-2 icon-hover px-3">
+          <a onclick="addToWishlist('{{product._id}}')" class="btn btn-outline">
             <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
         </div>
-        <div class="col-lg-12 d-flex justify-content-between align-items-center bg-light border mt-3 rounded">
+        <div class="col-lg-12 d-flex justify-content-between align-items-center card card-pad mt-3">
           <h6 class="mt-1">Reviews & rating</h6>
           <i role="button" class="fa-solid reviewDown fa-caret-down"></i>
           <i role="button" class="fa-solid reviewup fa-caret-up"></i>
         </div>
-        <div class="reviews p-2 bg-light border rounded mt-2" style="max-height:150px;overflow-y:auto">
+        <div class="reviews p-2 card mt-2" style="max-height:150px;overflow-y:auto">
           {{#each ratings}}
           <div class="card px-2 py-1 mt-2 ">
             <div class="card-title d-flex align-items-center  ">

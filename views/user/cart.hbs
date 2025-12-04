@@ -27,12 +27,10 @@
                 <p><strong>{{this.prod_detail.product_name}}</strong></p>
                 <p>Color: {{this.prod_detail.color}}</p>
                 <p>Brand: {{this.prod_detail.brand_name}}</p>
-                <button type="button" class="btn add-btn btn-sm me-1 mb-2" onclick="removeFromCart('{{this.prod_detail._id}}')" data-mdb-toggle="tooltip"
-                  title="Remove item">
+                <button type="button" class="btn btn-outline btn-sm me-1 mb-2" onclick="removeFromCart('{{this.prod_detail._id}}')" title="Remove item">
                   <i class="fas fa-trash"></i>
                 </button>
-                <button type="button" class="btn btn-danger btn-sm mb-2" data-mdb-toggle="tooltip"
-                  title="Move to the wish list">
+                <button type="button" class="btn btn-outline btn-sm mb-2" title="Move to the wish list">
                   <i class="fas fa-heart"></i>
                 </button>
                 <!-- Data -->
@@ -41,7 +39,7 @@
               <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                 <!-- Quantity -->
                 <div class="d-flex mb-4" style="max-width: 300px">
-                  <button onclick="decreaseCartQuantity('{{this.prod_detail._id}}')" style="height: 2.5rem;" class="btn user-btn me-2">
+                  <button onclick="decreaseCartQuantity('{{this.prod_detail._id}}')" style="height: 2.5rem;" class="btn btn-outline me-2">
                     <i class="fas fa-minus"></i>
                   </button>
 
@@ -50,7 +48,7 @@
                     <label class="form-label" for="form1">Quantity</label>
                   </div>
 
-                  <button style="height: 2.5rem;" class="btn user-btn ms-2"
+                  <button style="height: 2.5rem;" class="btn btn-outline ms-2"
                     onclick="increaseCartQuantity('{{this.prod_detail._id}}')">
                     <i class="fas fa-plus"></i>
                   </button>
@@ -103,7 +101,7 @@
             </ul>
 
 
-            <a href="/cart/checkout" type="button" class="btn user-btn btn-lg btn-block">
+            <a href="/cart/checkout" type="button" class="btn btn-primary btn-lg" style="width:100%;">
               Go to checkout
             </a>
           </div>
