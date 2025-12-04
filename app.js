@@ -151,23 +151,33 @@ const Message = require('./models/messageModel');
 const Admin = require('./models/adminModel');
 
 io.on('connection', (socket) => {
+  console.log('[socket] client connected', socket.id);
   socket.on('join', ({ userId, role }) => {
+    console.log('[socket] join', { userId, role, socket: socket.id });
     if (userId) {
       socket.join(`user:${userId}`);
+      console.log('[socket] joined room', `user:${userId}`);
     }
     if (role === 'admin') {
       socket.join('admins');
+      console.log('[socket] joined room admins');
     }
   });
 
   socket.on('chat:message', async ({ fromUserId, toUserId, content, senderRole }) => {
     try {
       if (!content) return;
+      console.log('[socket] chat:message recv', { fromUserId, toUserId, senderRole, content });
       let senderId, senderModel, recipientId, recipientModel;
       if (senderRole === 'admin') {
-        // Admin messages are persisted via REST in adminChat.js; just forward
-        io.to(`user:${fromUserId}`).emit('chat:message', { content, senderModel: 'Admin', recipientModel: 'User' });
-        io.to('admins').emit('chat:message', { content, senderModel: 'Admin', recipientModel: 'User' });
+        // Use toUserId as the target user room, include routing hints for admin clients
+        const adminMsg = { content, senderModel: 'Admin', recipientModel: 'User', recipientId: toUserId };
+        if (toUserId) {
+          console.log('[socket] emit to user room', `user:${toUserId}`);
+          io.to(`user:${toUserId}`).emit('chat:message', adminMsg);
+        }
+        console.log('[socket] emit to admins');
+        io.to('admins').emit('chat:message', adminMsg);
         return;
       } else {
         senderId = fromUserId;
@@ -177,7 +187,10 @@ io.on('connection', (socket) => {
         recipientModel = 'Admin';
       }
       const msg = await Message.create({ senderId, senderModel, recipientId, recipientModel, content });
+      console.log('[socket] persist msg', msg._id);
+      console.log('[socket] emit to user room', `user:${fromUserId}`);
       io.to(`user:${fromUserId}`).emit('chat:message', { ...msg.toObject() });
+      console.log('[socket] emit to admins');
       io.to('admins').emit('chat:message', { ...msg.toObject() });
     } catch (e) {
       console.error('chat:message error', e);

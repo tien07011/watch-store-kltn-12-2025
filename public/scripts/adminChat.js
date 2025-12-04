@@ -1,5 +1,6 @@
 (() => {
   const socket = io();
+  socket.on('connect', () => console.log('[adminChat] socket connected', socket.id));
   socket.emit('join', { role: 'admin' });
 
   const convList = document.getElementById('conv-list');
@@ -61,6 +62,7 @@
   inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
 
   socket.on('chat:message', (msg) => {
+    console.log('[adminChat] chat:message', msg);
     if (!currentUser || String(msg.senderModel) === 'Admin') return;
     if (String(msg.senderId) === String(currentUser._id) || String(msg.recipientId) === String(currentUser._id)) {
       renderMsg(msg, false);

@@ -1,4 +1,8 @@
 (() => {
+  // Do not render chat widget on admin pages
+  if (window.location && window.location.pathname && window.location.pathname.startsWith('/admin')) {
+    return;
+  }
   const socket = window.io ? io() : null;
 
   const state = { open: false };
@@ -57,6 +61,7 @@
 
   if (socket) {
     socket.on('chat:message', (msg) => {
+      console.log('[chatWidget] chat:message', msg);
       const mine = msg.senderModel === 'User';
       renderMsg(msg, mine);
     });
