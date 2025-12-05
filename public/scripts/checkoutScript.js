@@ -61,8 +61,9 @@ $(document).ready(() => {
                         if (data.success) {
                             location.assign('/cart/order-success')
                         }
-                        if (data.status) {
-                            showRazorpay(data.order, data.user);
+                        if (data.status && data.payUrl) {
+                            // Redirect to MoMo payment page
+                            location.assign(data.payUrl);
                         }
                     })
 
@@ -72,54 +73,7 @@ $(document).ready(() => {
         });
     }
 
-    //payment interface function 
-    showRazorpay = (order, user) => {
-        var options = {
-            "key": "rzp_test_I43lYVXIyrWCQF", // Enter the Key ID generated from the Dashboard
-            "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-            "currency": "INR",
-            "name": "Times Cart",
-            "description": "Test Transaction",
-            "image": "https://drive.google.com/uc?id=18EJgrQQfFCgLUCtUCOY-6tujL8KFX0qI",
-            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            "handler": function (response) {
-                verifyPayment(response)
-            },
-            "prefill": {
-                "name": user.user_name,
-                "email": user.user_email,
-                "contact": user.user_mobile
-            },
-            "notes": {
-                "address": "Razorpay Corporate Office"
-            },
-            "theme": {
-                "color": "#2ade99"
-            }
-        };
-
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
-        rzp1.on('payment.failed', function (response) {
-            swal.fire("Failed!", response.error.description, "error")
-                .then(() => {
-                    location.assign('/')
-                })
-        });
-    },
-
-        verifyPayment = async (response) => {
-            await fetch('/cart/verify-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(response)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.assign('/cart/order-success')
-                    }
-                })
-        }
+    // MoMo flow uses server-side redirect; no Razorpay popup
 
     $('.coupenss').hide();
     $('#checkCoupen').on('click', () => {

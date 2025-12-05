@@ -7,16 +7,9 @@ const Payment = require('../models/paymentModel');
 const Coupen = require('../models/coupenSchema');
 const mongoose = require('mongoose');
 
-//requiring razorpay
-const Razorpay = require('razorpay');
-
 const crypto = require('crypto');
-
-//Creating Razorpay instance 
-var instance = new Razorpay({
-    key_id: 'rzp_test_I43lYVXIyrWCQF',
-    key_secret: process.env.RAZ_SECRET_KEY,
-});
+const https = require('https');
+const momoConfig = require('../config/momoConfig');
 
 
 //adding item to cart
@@ -251,14 +244,9 @@ const render_checkout = async (req, res) => {
 //create order 
 const place_order = async (req, res) => {
     try {
-        let customer_id = res.locals.userData._id;
-        let status;
-        if (req.body.payment_method === 'COD' || req.body.payment_method === 'wallet') {
-            status = 'confirmed'
-        } else {
-            status = 'pending'
-        }
-        let order;
+        const customer_id = res.locals.userData._id;
+        const isConfirmed = (req.body.payment_method === 'COD' || req.body.payment_method === 'wallet');
+        const status = isConfirmed ? 'confirmed' : 'pending';
 
         let cartList = await User.aggregate([
             { $match: { _id: customer_id } },
@@ -272,7 +260,7 @@ const place_order = async (req, res) => {
                     as: 'prod_detail'
                 }
             },
-            { $unwind: { path: '$prod_detail' }, },
+            { $unwind: { path: '$prod_detail' } },
             {
                 $project: {
                     'prod_detail_id': 1,
@@ -280,237 +268,288 @@ const place_order = async (req, res) => {
                     cart: 1
                 }
             }
-        ])
+        ]);
 
         let items = [];
         const address = await Address.findOne({ _id: req.body.address });
-        if (req.body.coupen != '') {
 
+        let order;
+        if (req.body.coupen != '') {
             const couponId = new mongoose.Types.ObjectId(req.body.coupen);
             const userId = res.locals.userData._id;
-            if (status === 'confirmed') {
-                let coupon = await Coupen.findByIdAndUpdate(
+            if (isConfirmed) {
+                await Coupen.findByIdAndUpdate(
                     { _id: couponId },
-                    {
-                        $inc: { used_count: 1 },
-                        $push: { user_list: userId },
-                    },
-                    {
-                        new: true
-                    }
+                    { $inc: { used_count: 1 }, $push: { user_list: userId } },
+                    { new: true }
                 );
             }
-            let dicount = req.body.discount
-            let coupen_code = req.body.coupen_code
+            const discount = req.body.discount;
+            const coupen_code = req.body.coupen_code;
             for (let i = 0; i < cartList.length; i++) {
+                const base = parseInt(cartList[i].prod_detail.selling_price);
                 items.push({
                     product_id: cartList[i].cart.product_id,
                     quantity: cartList[i].cart.quantity,
-                    price: (parseInt(cartList[i].prod_detail.selling_price)) - (parseInt(cartList[i].prod_detail.selling_price) * dicount / 100),
-                    status: status
+                    price: base - (base * discount / 100),
+                    status
                 });
             }
             order = {
-                customer_id: customer_id,
-                items: items,
-                address: address,
+                customer_id,
+                items,
+                address,
                 payment_method: req.body.payment_method,
                 total_amount: parseInt(req.body.price),
-                status: status,
-                coupon: {
-                    coupon_id: couponId,
-                    discount: dicount,
-                    code: coupen_code
-                }
-            }
-
-
-
+                status,
+                coupon: { coupon_id: couponId, discount, code: coupen_code }
+            };
         } else {
             for (let i = 0; i < cartList.length; i++) {
                 items.push({
                     product_id: cartList[i].cart.product_id,
                     quantity: cartList[i].cart.quantity,
                     price: parseInt(cartList[i].prod_detail.selling_price),
-                    status: status
+                    status
                 });
             }
             order = {
-                customer_id: customer_id,
-                items: items,
-                address: address,
-                status: status,
+                customer_id,
+                items,
+                address,
+                status,
                 payment_method: req.body.payment_method,
                 total_amount: parseInt(req.body.price)
-            }
+            };
         }
 
         if (req.body.payment_method === 'COD') {
-            const createOrder = await Order.create(order);
-            if (createOrder) {
-
-                //empty the cart
-                await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } })
-
-                //reduce the stock count 
+            const created = await Order.create(order);
+            if (created) {
+                await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
                 for (let i = 0; i < items.length; i++) {
-                    await Product.updateOne({ _id: items[i].product_id }, { $inc: { stock: -(items[i].quantity) } })
+                    await Product.updateOne({ _id: items[i].product_id }, { $inc: { stock: -(items[i].quantity) } });
                 }
-                req.session.order = {
-                    status: true
-                }
-                res.json({
-                    success: true
-                });
+                req.session.order = { status: true };
+                return res.json({ success: true });
             }
         } else if (req.body.payment_method === 'wallet') {
-            const createOrder = await Order.create(order);
-            if (createOrder) {
+            const created = await Order.create(order);
+            if (created) {
                 const user = res.locals.userData;
-                // empty cart
                 await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
-
-                // decreasing the wallet amount
                 await User.updateOne({ _id: customer_id }, { $set: { user_wallet: parseInt(user.user_wallet) - parseInt(req.body.price) } });
-
-                // Marking in wallet history
-                const newHistoryItem = {
-                    amount: parseInt(req.body.price),
-                    status: "Debit",
-                    time: Date.now()
-                };
-
-
-                const updatedUser = await User.findByIdAndUpdate(
-                    { _id: customer_id },
-                    { $push: { wallet_history: newHistoryItem } },
-                    { new: true }
-                );
-
-
-                //reduce the stock count 
+                const newHistoryItem = { amount: parseInt(req.body.price), status: 'Debit', time: Date.now() };
+                await User.findByIdAndUpdate({ _id: customer_id }, { $push: { wallet_history: newHistoryItem } }, { new: true });
                 for (let i = 0; i < items.length; i++) {
-                    await Product.updateOne({ _id: items[i].product_id }, { $inc: { stock: -(items[i].quantity) } })
+                    await Product.updateOne({ _id: items[i].product_id }, { $inc: { stock: -(items[i].quantity) } });
                 }
-                req.session.order = {
-                    status: true
-                }
-                res.json({
-                    success: true
-                })
+                req.session.order = { status: true };
+                return res.json({ success: true });
             }
         } else {
-            const createOrder = await Order.create(order);
+            // Online via MoMo
+            const createdOrder = await Order.create(order);
+            const total = parseInt(req.body.price);
+            const orderId = createdOrder._id.toString();
 
-            let total = parseInt(req.body.price);
-            let orderId = createOrder._id;
-
-            let user = await User.findById(res.locals.userData._id);
-
-            //creat order for razorpay
-            const Razorder = await createRazOrder(orderId, total).then((order) => order);
-
-            const timestamp = Razorder.created_at;
-            const date = new Date(timestamp * 1000); // Convert the Unix timestamp to milliseconds
-
-            // Format the date and time
-            const formattedDate = date.toISOString();
-
-            //creating a instance for payment details
             let payment = new Payment({
-                payment_id: Razorder.id,
-                amount: parseInt(Razorder.amount) / 100,
-                currency: Razorder.currency,
-                order_id: orderId,
-                status: Razorder.status,
-                created_at: formattedDate,
+                payment_id: orderId,
+                amount: total,
+                currency: 'VND',
+                order_id: createdOrder._id,
+                status: 'created',
+                created_at: new Date().toISOString(),
+                payment_method: 'Online Payment',
             });
-
-            //saving in to db
             await payment.save();
 
-            res.json({
-                status: true,
-                order: Razorder,
-                user
-            })
+            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            const returnUrl = `${baseUrl}/cart/momo-return`;
+            const ipnUrl = `${baseUrl}/cart/momo-ipn`;
+            const payUrl = await createMomoOrder({
+                orderId,
+                amount: total,
+                returnUrl,
+                ipnUrl,
+                orderInfo: `Thanh toan don hang ${orderId}`,
+                extraData: Buffer.from(`userId=${res.locals.userData._id}`).toString('base64'),
+                requestType: 'captureWallet',
+            });
+            if (!payUrl) return res.status(500).json({ success: false, message: 'MoMo create payment failed' });
+            return res.json({ status: true, payUrl });
         }
 
+        return res.status(400).json({ success: false });
     } catch (err) {
-        res.send(err.message)
+        res.send(err.message);
     }
 }
 
-//create razorpay order 
-const createRazOrder = (orderId, total) => {
-    return new Promise((resolve, reject) => {
-        let options = {
-            amount: total * 100,  // amount in the smallest currency unit
-            currency: "INR",
-            receipt: orderId.toString()
-        };
-        instance.orders.create(options, function (err, order) {
-            if (err) {
-                console.log(err)
-            }
-            resolve(order);
+// Create MoMo order
+const createMomoOrder = ({ orderId, amount, returnUrl, ipnUrl, orderInfo, extraData, requestType }) => {
+    return new Promise((resolve) => {
+        const requestId = `${orderId}-${Date.now()}`;
+        const rawSignature = `accessKey=${momoConfig.accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${momoConfig.partnerCode}&redirectUrl=${returnUrl}&requestId=${requestId}&requestType=${requestType}`;
+        const signature = crypto.createHmac('sha256', momoConfig.secretKey).update(rawSignature).digest('hex');
+
+        const body = JSON.stringify({
+            partnerCode: momoConfig.partnerCode,
+            accessKey: momoConfig.accessKey,
+            requestId,
+            amount: `${amount}`,
+            orderId,
+            orderInfo,
+            redirectUrl: returnUrl,
+            ipnUrl,
+            extraData,
+            requestType,
+            signature,
+            lang: 'vi'
         });
-    })
 
-}
+        const url = new URL(momoConfig.endpoint);
+        const options = {
+            hostname: url.hostname,
+            path: url.pathname,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(body)
+            }
+        };
 
-//verifying payment
+        const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => { data += chunk; });
+            res.on('end', () => {
+                try {
+                    const parsed = JSON.parse(data || '{}');
+                    resolve(parsed.payUrl || null);
+                } catch {
+                    resolve(null);
+                }
+            });
+        });
+        req.on('error', () => resolve(null));
+        req.write(body);
+        req.end();
+    });
+};
+
+//verifying payment (legacy Razorpay support if needed)
 const verifyPaymenet = async (req, res) => {
-    const hmac = crypto.createHmac("sha256", process.env.RAZ_SECRET_KEY);
-    hmac.update(req.body.razorpay_order_id + "|" + req.body.razorpay_payment_id);
-    let generatedSignature = hmac.digest("hex");
+    const hmac = crypto.createHmac('sha256', process.env.RAZ_SECRET_KEY);
+    hmac.update(req.body.razorpay_order_id + '|' + req.body.razorpay_payment_id);
+    let generatedSignature = hmac.digest('hex');
     let isSignatureValid = generatedSignature === req.body.razorpay_signature;
 
     if (isSignatureValid) {
         let customer_id = res.locals.userData._id;
-
         let items = res.locals.userData.cart;
-        //reduce the stock count 
         for (let i = 0; i < items.length; i++) {
             await Product.updateOne({ _id: items[i].product_id }, { $inc: { stock: -(items[i].quantity) } });
         }
-
-
-        //empty the cart
-        await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } })
+        await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
         let paymentId = req.body.razorpay_order_id;
-
         const orderID = await Payment.findOne({ payment_id: paymentId }, { _id: 0, order_id: 1 });
-
         const order_id = orderID.order_id;
-
-        const updateOrder = await Order.updateOne({ _id: order_id }, { $set: { 'items.$[].status': 'confirmed', status: 'confirmed' } });
-
+        await Order.updateOne({ _id: order_id }, { $set: { 'items.$[].status': 'confirmed', status: 'confirmed' } });
         let couponId = await Order.findOne({ _id: order_id }, { coupon: 1, _id: 0 });
-
         if (couponId) {
             couponId = couponId.coupon.coupon_id;
             if (couponId) {
-                let updateCoupon = await Coupen.findByIdAndUpdate(
+                await Coupen.findByIdAndUpdate(
                     { _id: couponId },
-                    {
-                        $inc: { used_count: 1 },
-                        $push: { user_list: customer_id },
-                    },
-                    {
-                        new: true
-                    }
+                    { $inc: { used_count: 1 }, $push: { user_list: customer_id } },
+                    { new: true }
                 );
             }
         }
-        req.session.order = {
-            status: true
-        }
-        res.json({
-            success: true
-        })
+        req.session.order = { status: true };
+        return res.json({ success: true });
     }
+    return res.json({ success: false });
 }
+
+// MoMo return (user redirect)
+const momoReturn = async (req, res) => {
+    try {
+        const { resultCode, orderId } = req.query;
+        if (String(resultCode) === '0' && orderId) {
+            req.session.order = { status: true };
+            return res.redirect('/cart/order-success');
+        }
+        return res.redirect('/');
+    } catch {
+        return res.redirect('/');
+    }
+};
+
+// MoMo IPN (server callback)
+const momoIpn = async (req, res) => {
+    try {
+        const {
+            partnerCode,
+            accessKey,
+            amount,
+            orderId,
+            orderInfo,
+            orderType,
+            transId,
+            resultCode,
+            message,
+            payType,
+            requestId,
+            responseTime,
+            extraData,
+            signature,
+        } = req.body || {};
+
+        if (partnerCode !== momoConfig.partnerCode || accessKey !== momoConfig.accessKey) {
+            return res.status(400).json({ message: 'Invalid partner' });
+        }
+
+        if (signature) {
+            const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData || ''}&message=${message || ''}&orderId=${orderId}&orderInfo=${orderInfo || ''}&orderType=${orderType || ''}&partnerCode=${partnerCode}&payType=${payType || ''}&requestId=${requestId}&responseTime=${responseTime || ''}&resultCode=${resultCode}&transId=${transId || ''}`;
+            const expected = crypto.createHmac('sha256', momoConfig.secretKey).update(rawSignature).digest('hex');
+            if (expected !== signature) {
+                return res.status(400).json({ message: 'Invalid signature' });
+            }
+        }
+
+        if (String(resultCode) === '0') {
+            const order = await Order.findById(orderId);
+            if (order) {
+                for (let i = 0; i < order.items.length; i++) {
+                    await Product.updateOne({ _id: order.items[i].product_id }, { $inc: { stock: -(order.items[i].quantity) } });
+                }
+                await User.updateOne({ _id: order.customer_id }, { $unset: { cart: '' } });
+                await Order.updateOne({ _id: orderId }, { $set: { 'items.$[].status': 'confirmed', status: 'confirmed' } });
+
+                let couponId = order.coupon && order.coupon.coupon_id ? order.coupon.coupon_id : null;
+                if (couponId) {
+                    await Coupen.findByIdAndUpdate(
+                        { _id: couponId },
+                        { $inc: { used_count: 1 }, $push: { user_list: order.customer_id } },
+                        { new: true }
+                    );
+                }
+
+                await Payment.updateOne(
+                    { order_id: order._id },
+                    { $set: { status: 'paid', amount: parseInt(amount || 0), payment_id: transId || orderId } }
+                );
+            }
+            return res.json({ message: 'ok' });
+        }
+
+        await Payment.updateOne({ order_id: orderId }, { $set: { status: 'failed' } });
+        return res.json({ message: 'failed' });
+    } catch (e) {
+        return res.status(500).json({ message: 'error' });
+    }
+};
 
 //render sucecess page 
 const order_success = async (req, res) => {
@@ -554,5 +593,7 @@ module.exports = {
     place_order,
     verify_order,
     order_success,
-    verifyPaymenet
+    verifyPaymenet,
+    momoReturn,
+    momoIpn
 }

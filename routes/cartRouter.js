@@ -13,7 +13,9 @@ const { render_cart_page,
     verify_order,
     add_product_to_cart,
     order_success,
-    verifyPaymenet } = require('../controller/cartController');
+    verifyPaymenet,
+    momoReturn,
+    momoIpn } = require('../controller/cartController');
 
 
 router.get('/', authenicateUser, render_cart_page);
@@ -33,5 +35,9 @@ router.post('/place-order', authenicateUser, place_order);
 router.post('/verify-payment', authenicateUser, verifyPaymenet)
 
 router.get('/order-success', authenicateUser, order_success)
+
+// MoMo payment callbacks
+router.get('/momo-return', momoReturn)
+router.post('/momo-ipn', momoIpn)
 
 module.exports = router;
