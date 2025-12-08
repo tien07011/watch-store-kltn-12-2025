@@ -97,7 +97,9 @@ async function seed(options = {}) {
   for (let i = 0; i < productCount; i++) {
     const cat = fakerVI.helpers.arrayElement(createdCategories);
     const title = fakerVI.commerce.productName();
-    const price = Number(fakerVI.commerce.price({ min: 50000, max: 3000000 }));
+    // Realistic Vietnamese đồng price (500k → 30M), rounded to nearest 1,000đ
+    const rawPrice = fakerVI.number.int({ min: 500_000, max: 30_000_000 });
+    const price = Math.round(rawPrice / 1000) * 1000;
     const stock = fakerVI.number.int({ min: 10, max: 200 });
 
     const primary = fakerVI.helpers.arrayElement(productImages) || 'images/no-image.jpg';
@@ -116,7 +118,8 @@ async function seed(options = {}) {
       primary_image: { name: path.basename(primary), path: primary },
       secondary_images: secondary,
       actual_price: String(price),
-      selling_price: String(fakerVI.number.int({ min: Math.floor(price * 0.6), max: Math.floor(price * 0.95) })),
+      // Discounted selling price 60% → 95% of actual, rounded to nearest 1,000đ
+      selling_price: String(Math.round(fakerVI.number.int({ min: Math.floor(price * 0.6), max: Math.floor(price * 0.95) }) / 1000) * 1000),
       color: fakerVI.color.human(),
       GST: fakerVI.number.int({ min: 5, max: 18 }),
       status: true,

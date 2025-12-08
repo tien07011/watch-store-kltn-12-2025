@@ -1,84 +1,68 @@
-<section class="" style="background-color: #eee;">
-    <div class="container" style="padding: 3% 5%;">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-lg-12 col-xl-11">
-                <div class="card text-black" style="border-radius: 25px;">
-                    <div class="card-body">
-                        <div class="row justify-content-center">
-                            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+<section class="section">
+    <div class="container">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-lg-10">
+                <div class="card signup-card">
+                    <div class="card-pad">
+                        <div class="row align-items-center g-4">
+                            <div class="col-md-6 order-2 order-md-1">
+                                <h1 class="mb-2">Đăng ký tài khoản</h1>
+                                <p class="lead mb-3">Tạo tài khoản để theo dõi đơn hàng và nhận ưu đãi.</p>
 
-                                <p class="text-center h1 fw-bold mb-2 mx-1 mx-md-4 ">Đăng ký</p>
+                                <form class="signup-form" novalidate>
+                                    <div class="form-group">
+                                        <label class="form-label" for="Name">Họ và tên</label>
+                                        <input type="text" id="Name" class="input" autocomplete="name" />
+                                        <span id="Name-err" class="form-error"></span>
+                                    </div>
 
-                                <form class="mx-1 mx-md-2">
+                                    <div class="form-group">
+                                        <label class="form-label" for="emailAddress">Email</label>
+                                        <input type="email" id="emailAddress" class="input" autocomplete="email" />
+                                        <span id="Email-err" class="form-error"></span>
+                                    </div>
 
-                                    <div class="d-flex flex-row align-items-center mb-1">
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                        <div class="form-outline flex-fill mb-0">
-                                            <span id="Name-err" style="color: red;"></span>
-                                            <input type="text" id="Name" class="form-control" />
-                                            <label class="form-label" for="form3Example1c">Họ và tên</label>
+                                    <div class="form-group">
+                                        <label class="form-label" for="phoneNumber">Số điện thoại</label>
+                                        <input type="text" id="phoneNumber" class="input" inputmode="numeric" autocomplete="tel" />
+                                        <span id="Phone-err" class="form-error"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="stack-sm" style="justify-content: space-between; align-items:center;">
+                                            <label class="form-label" for="Password">Mật khẩu</label>
+                                            <button type="button" id="togglePw" class="btn btn-outline btn-sm" style="padding:.35rem .6rem;">Hiện/Ẩn</button>
                                         </div>
-                                    </div>
-
-                                    <div class="d-flex flex-row align-items-center mb-1">
-                                        <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                                        <div class="form-outline flex-fill mb-0">
-                                            <span id="Email-err" style="color: red;"></span>
-                                            <input type="email" id="emailAddress" class="form-control" />
-                                            <label class="form-label" for="form3Example3c">Email</label>
+                                        <div class="input-group">
+                                            <input type="password" id="Password" class="input" autocomplete="new-password" />
                                         </div>
-                                    </div>
-                                    <div class="d-flex flex-row align-items-center mb-1">
-                                        <i class="fa-solid fa-phone me-3 fa-lg fa-fw"></i>
-                                        <div class="form-outline flex-fill mb-0">
-                                            <span id="Phone-err" style="color: red;"></span>
-                                            <input type="text" id="phoneNumber" class="form-control" />
-                                            <label class="form-label" for="form3Example3c">Số điện thoại</label>
-                                        </div>
+                                        <span id="Pass-err" class="form-error"></span>
                                     </div>
 
-                                    <div class="d-flex flex-row align-items-center mb-1">
-                                        <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                                        <div class="form-outline flex-fill mb-0">
-                                            <span id="Pass-err" style="color: red;"></span>
-                                            <input type="password" id="Password" class="form-control" />
-                                            <label class="form-label" for="form3Example4c">Mật khẩu</label>
-                                        </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="repeatePass">Nhập lại mật khẩu</label>
+                                        <input type="password" id="repeatePass" class="input" autocomplete="new-password" />
                                     </div>
 
-                                    <div class="d-flex flex-row align-items-center mb-1">
-                                        <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                                        <div class="form-outline flex-fill mb-0">
-                                            <input type="password" id="repeatePass" class="form-control" />
-                                            <label class="form-label" for="form3Example4cd">Nhập lại mật khẩu</label>
-                                            <a style="margin-left: 2.8rem;" href="/login"><i class="fa-solid fa-arrow-left-long"><span class="ms-1" style="font-family: roboto;">Đăng nhập</span></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex flex-row align-items-center mb-1">
-                                        <div id="otpinput" style="display: none;" class="form-outline mb-4">
-                                            <p class="form-label labell h6 fw-bold" for="form3Example3">Nhập mã OTP đã gửi tới
-                                                <span id="Email-id"></span>
-                                            </p>
-                                            <div><span id="OTP-err" style="color: red;"></span></div>
-                                            <input id="Otp-input" type="text" name="text" autocomplete="on"
-                                                class="form-control form-control-lg" placeholder="Nhập mã OTP tại đây" />
-                                        </div>
+                                    <div id="otpinput" class="form-group" style="display:none;">
+                                        <p class="form-label">Nhập mã OTP đã gửi tới <strong id="Email-id"></strong></p>
+                                        <input id="Otp-input" type="text" class="input" inputmode="numeric" placeholder="Nhập mã OTP" />
+                                        <span id="OTP-err" class="form-error"></span>
                                     </div>
 
-                                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                        <button id="gen_btn" class="btn user-btn btn-lg">Gửi mã OTP</button>
-                                        <input id="clearBTN" class="ml-2 btn clear-btn btn-lg" type="reset"
-                                            autocomplete="on" value="Xóa" />
-
-                                        <button style="display: none;" id="verify_btn" class="btn user-btn btn-lg">Xác minh OTP</button>
+                                    <div class="stack-sm mt-2" style="gap:.75rem;">
+                                        <button id="gen_btn" class="btn btn-primary" type="button">Gửi mã OTP</button>
+                                        <input id="clearBTN" class="btn btn-outline" type="reset" value="Xóa" />
+                                        <button id="verify_btn" class="btn btn-secondary" type="button" style="display:none;">Xác minh OTP</button>
                                     </div>
-
+                                    <div class="mt-3">
+                                        <a class="ladels" href="/login">← Đã có tài khoản? Đăng nhập</a>
+                                    </div>
                                 </form>
-
                             </div>
-                            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                                <img src="/images/signup.png"
-                                    class="img-fluid" alt="Hình minh họa">
+
+                            <div class="col-md-6 order-1 order-md-2">
+                                <img src="/images/signup.png" class="img-fluid" alt="Hình minh họa đăng ký">
                             </div>
                         </div>
                     </div>

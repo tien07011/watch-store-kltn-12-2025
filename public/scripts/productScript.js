@@ -85,7 +85,8 @@ function initClientSearchAndSort(){
         const name = card.getAttribute('data-name') || '';
         const brand = card.getAttribute('data-brand') || '';
         const color = card.getAttribute('data-color') || '';
-        const category = card.getAttribute('data-category') || '';
+        const categoryId = (card.getAttribute('data-category') || '').toLowerCase();
+        const categoryName = normalizeVN(card.getAttribute('data-category-name') || '');
         const priceStr = card.getAttribute('data-price') || '0';
         const price = Number(priceStr);
 
@@ -97,9 +98,11 @@ function initClientSearchAndSort(){
         }
         // category filter (server stores id; we only have id on data-category)
         if (filters.cats.length){
-            // when categories are names, try name match fallback (not available here), so skip if not matching id
-            const catMatch = filters.cats.some(c => c === (category || '').toLowerCase());
-            if (!catMatch) return false;
+            const ok = filters.cats.some(c => {
+                const cn = normalizeVN(c);
+                return cn === categoryName || c === categoryId;
+            });
+            if (!ok) return false;
         }
         // brand filter
         if (filters.brands.length){

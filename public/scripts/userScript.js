@@ -109,3 +109,12 @@ if (verify_btn) {
         }
     })
 }
+
+// Password show/hide toggle
+const togglePw = document.getElementById('togglePw');
+if (togglePw && Password) {
+    togglePw.addEventListener('click', (e) => {
+        e.preventDefault();
+        Password.type = Password.type === 'password' ? 'text' : 'password';
+    });
+}

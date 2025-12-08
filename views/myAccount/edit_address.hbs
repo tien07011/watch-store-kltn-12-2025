@@ -1,116 +1,70 @@
-<div class="container mt-3">
-    <div style="width: 36rem;" class="header d-flex align-items-center justify-content-between">
-        <h3 class="h4 user-text fw-bold mb-3">Edit Address</h3>
+<div class="container mt-5">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <h3 class="h4 fw-bold text-second mb-2">Sửa địa chỉ</h3>
     </div>
 
+    <form action="/my-account/my-address/update-address/{{address._id}}" method="post" class="card p-4 mt-3">
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="address_cust_name">Họ và tên</label>
+                <input name="address_cust_name" id="address_cust_name" type="text" class="form-control" placeholder="Nhập họ và tên" value="{{address.address_cust_name}}" required>
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="phone">Số điện thoại</label>
+                <input name="phone" id="phone" type="text" class="form-control" placeholder="VD: 0987 654 321" value="{{address.phone}}" required>
+            </div>
 
-    <form action="/my-account/my-address/update-address/{{address._id}}" method="post" class=" add-form container">
-        <div class="row">
-            <div class="row col-md-4 me-3">
-                <label for="form">Name</label>
-                <input name="address_cust_name" type="text" value="{{address.address_cust_name}}" class="form-control" required>
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="house_name">Tên nhà/Địa chỉ</label>
+                <input name="house_name" id="house_name" type="text" class="form-control" placeholder="Tên nhà, số nhà" value="{{address.house_name}}" required>
             </div>
-            <div class="row col-md-4">
-                <label for="form">Phone</label>
-                <input name="phone" value="{{address.phone}}" type="text" class="form-control" required>
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="area_street">Phố/Đường</label>
+                <input name="area_street" id="area_street" type="text" class="form-control" placeholder="Tên phố/đường" value="{{address.area_street}}" required>
             </div>
-        </div>
-        <div class="row">
-            <div class="row col-md-4 me-3">
-                <label for="form">House Name</label>
-                <input name="house_name" type="text" value="{{address.house_name}}" class="form-control" required>
+
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="locality">Phường/Xã</label>
+                <input name="locality" id="locality" type="text" class="form-control" placeholder="Phường/Xã" value="{{address.locality}}" required>
             </div>
-            <div class="row col-md-4">
-                <label for="form">Area/Street</label>
-                <input name="area_street" type="text" value="{{address.area_street}}" class="form-control" required>
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="town">Quận/Huyện</label>
+                <input name="town" id="town" type="text" class="form-control" placeholder="Quận/Huyện" value="{{address.town}}" required>
             </div>
-        </div>
-        <div class="row">
-            <div class="row col-md-4 me-3">
-                <label for="form">Locality</label>
-                <input name="locality" type="text" value="{{address.locality}}" class="form-control" required>
+
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="state">Tỉnh/Thành phố</label>
+                <input name="state" id="state" type="text" class="form-control" placeholder="Tỉnh/Thành phố" value="{{address.state}}" required>
             </div>
-            <div class="row col-md-4">
-                <label for="form">Town</label>
-                <input name="town" type="text" value="{{address.town}}" class="form-control" required>
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="pincode">Mã bưu chính</label>
+                <input name="pincode" id="pincode" type="number" class="form-control" placeholder="Ví dụ: 700000" value="{{address.pincode}}" required>
             </div>
-        </div>
-        <div class="row">
-            <div class="row col-md-4 me-3">
-                <label for="form">State</label>
-                <select class="form-select" name="state">
-                    <option value="{{address.state}}">{{address.state}}</option>
-                    <option value="Andhra Pradesh">Andhra Pradesh</option>
-                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                    <option value="Assam">Assam</option>
-                    <option value="Bihar">Bihar</option>
-                    <option value="Chhattisgarh">Chhattisgarh</option>
-                    <option value="Goa">Goa</option>
-                    <option value="Gujarat">Gujarat</option>
-                    <option value="Haryana">Haryana</option>
-                    <option value="Himachal Pradesh">Himachal Pradesh</option>
-                    <option value="Jharkhand">Jharkhand</option>
-                    <option value="Karnataka">Karnataka</option>
-                    <option value="Kerala">Kerala</option>
-                    <option value="Madhya Pradesh">Madhya Pradesh</option>
-                    <option value="Maharashtra">Maharashtra</option>
-                    <option value="Manipur">Manipur</option>
-                    <option value="Meghalaya">Meghalaya</option>
-                    <option value="Mizoram">Mizoram</option>
-                    <option value="Nagaland">Nagaland</option>
-                    <option value="Odisha">Odisha</option>
-                    <option value="Punjab">Punjab</option>
-                    <option value="Rajasthan">Rajasthan</option>
-                    <option value="Sikkim">Sikkim</option>
-                    <option value="Tamil Nadu">Tamil Nadu</option>
-                    <option value="Telangana">Telangana</option>
-                    <option value="Tripura">Tripura</option>
-                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                    <option value="Uttarakhand">Uttarakhand</option>
-                    <option value="West Bengal">West Bengal</option>
-                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                    <option value="Chandigarh">Chandigarh</option>
-                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu
-                    </option>
-                    <option value="Lakshadweep">Lakshadweep</option>
-                    <option value="Delhi">Delhi</option>
-                    <option value="Puducherry">Puducherry</option>
-                </select>
+
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="landmark">Điểm mốc</label>
+                <input name="landmark" id="landmark" type="text" class="form-control" placeholder="Gần..." value="{{address.landmark}}" required>
             </div>
-            <div class="row col-md-4">
-                <label for="form">Pincode</label>
-                <input name="pincode" type="number" value="{{address.pincode}}" class="form-control" required>
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="alternate_phone">SĐT dự phòng</label>
+                <input name="alternate_phone" id="alternate_phone" type="number" class="form-control" placeholder="Tùy chọn" value="{{address.alternate_phone}}">
             </div>
-        </div>
-        <div class="row">
-            <div class="row col-md-4 me-3">
-                <label for="form">Landmark</label>
-                <input name="landmark" type="text" value="{{address.landmark}}" class="form-control" required>
+
+            <div class="col-12 d-flex gap-4 mt-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="HOME" name="address_type" id="flexRadioDefault1" {{#if (eq address.address_type "HOME")}}checked{{/if}}>
+                    <label class="form-check-label" for="flexRadioDefault1">NHÀ</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" value="WORK" type="radio" name="address_type" id="flexRadioDefault2" {{#if (eq address.address_type "WORK")}}checked{{/if}}>
+                    <label class="form-check-label" for="flexRadioDefault2">CÔNG TY</label>
+                </div>
             </div>
-            <div class="row col-md-4">
-                <label for="form">Alternate Phone</label>
-                <input name="alternate_phone" type="number" value="{{address.alternate_phone}}" class="form-control">
+
+            <div class="col-12 d-flex gap-3 mt-3">
+                <input class="btn but user-btn" type="submit" value="Cập nhật" />
+                <input class="btn but clear-btn btn-outline" type="reset" autocomplete="on" value="Xóa" />
             </div>
-        </div>
-        <div class="row">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" value="HOME" name="address_type" id="flexRadioDefault1"
-                    checked>
-                <label class="form-check-label" for="flexRadioDefault1">
-                    HOME
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" value="WORK" type="radio" name="address_type" id="flexRadioDefault2">
-                <label class="form-check-label" for="flexRadioDefault2">
-                    WORK
-                </label>
-            </div>
-        </div>
-        <div class="row mt-2 mb-3 d-flex ">
-            <input class="btn but col-md-3 user-btn btn-lg" value="Upadate" type="submit" />
-            <input class="ml-2 btn col-md-3 but clear-btn btn-lg" type="reset" autocomplete="on" value="Clear" />
         </div>
     </form>
-
 </div>

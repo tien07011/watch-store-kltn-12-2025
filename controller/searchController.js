@@ -65,12 +65,17 @@ const get_searchedProducts = async (req, res) => {
         });
     }
 
-    // category filtering
+    // category filtering (case/space-insensitive, supports single or multiple values)
     let category = req.query.category;
     if (category) {
+        const normalize = (s) => String(s).toLowerCase().replace(/\s/g, '');
+        const decode = (s) => decodeURIComponent(String(s).replace(/\+/g, ' '));
+        const catValues = Array.isArray(category) ? category : [category];
+        const normalizedCats = catValues.map((c) => normalize(decode(c)));
         Products = Products.filter((product) => {
-            return category.includes(product.category.cat_name);
-        })
+            const productCat = normalize(product?.category?.cat_name || '');
+            return normalizedCats.includes(productCat);
+        });
     }
     // brand filtering
     let brand = req.query.brand;
@@ -133,15 +138,14 @@ const get_searchedProducts = async (req, res) => {
     let cartCount;
     if (userData) {
         cartCount = userData.cart.length
-    }
-    let user_id = userData._id;
-    for (const product of Products) {
-        let product_id = product._id;
-        let user = await User.findOne({ _id: user_id, 'wish_list.product_id': product_id });
-
-        if (user) {
-            product.wish = false;
-        } else {
+        const user_id = userData._id;
+        for (const product of Products) {
+            const product_id = product._id;
+            const user = await User.findOne({ _id: user_id, 'wish_list.product_id': product_id });
+            product.wish = !user;
+        }
+    } else {
+        for (const product of Products) {
             product.wish = true;
         }
     }

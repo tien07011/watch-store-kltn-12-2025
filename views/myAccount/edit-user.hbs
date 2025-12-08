@@ -1,58 +1,72 @@
 <div class="container mt-3">
-    <div class="row col-md-12">
-        <p class="h4 fw-bold user-text">
-            Edit your Details
-        </p>
+    <div class="row">
+        <div class="col-12">
+            <h4 class="fw-bold text-second">Chỉnh sửa thông tin</h4>
+        </div>
     </div>
-    <div class="card py-5 px-5 col-md-10">
+
+    <div class="card col-12 col-md-10 mt-3 p-4">
         <form>
-            <div class="row col-md-8">
-                <div id="name-Err" class=" text-danger"></div>
-                <input id="user_name" type="text" value="{{userData.user_name}}" class="form-control">
-                <label for="form">Name</label>
-            </div>
-            
-            <input id="user_id" type="hidden" autocomplete="on" value="{{userData._id}}" class="form-control ">
-            <div class="row col-md-8">
-                <div id="phone-Err" class=" text-danger"></div>
-                <input id="user_mobile" type="number" autocomplete="on" value="{{userData.user_mobile}}"
-                    class="form-control ">
-                <label for="form">Phone</label>
-            </div>
-            <div class="row ms-3 col-md-8">
-                <input type="checkbox" id="checkBox" autocomplete="on" class="form-check-input ">
-                <label class="form-check-label mb-3" for="exampleCheck1">Change Password </label>
-            </div>
-            <div class="row col-md-8">
-                <div id="cur_pass_err" class=" text-danger"></div>
-                <input id="current_pass" type="password" autocomplete="on" class="pass form-control ">
-                <label class="pass" for="form">Enter your Current Password</label>
+            <input id="user_id" type="hidden" autocomplete="on" value="{{userData._id}}" class="form-control" />
+
+            <div class="row g-3">
+                <div class="col-12 col-md-8">
+                    <label class="form-label" for="user_name">Họ và tên</label>
+                    <input id="user_name" type="text" value="{{userData.user_name}}" class="form-control" placeholder="Nhập họ và tên" />
+                    <div id="name-Err" class="form-error"></div>
+                </div>
+
+                <div class="col-12 col-md-8">
+                    <label class="form-label" for="user_mobile">Số điện thoại</label>
+                    <input id="user_mobile" type="number" autocomplete="on" value="{{userData.user_mobile}}" class="form-control" placeholder="Nhập số điện thoại" />
+                    <div id="phone-Err" class="form-error"></div>
+                </div>
             </div>
 
-            <div class="row confirm_new_pass col-md-8">
-                <div id="new_pass_err" class=" text-danger"></div>
-                <input id="new_password_id" type="password" value="" class="new_password form-control">
-                <label for="form">Enter Password</label>
+            <div class="mt-4">
+                <div class="form-check">
+                    <input type="checkbox" id="checkBox" autocomplete="on" class="form-check-input" />
+                    <label class="form-check-label" for="checkBox">Đổi mật khẩu</label>
+                </div>
             </div>
-            <div class="row confirm_new_pass col-md-8">
-                <div id="confim_pass_err" class=" text-danger"></div>
-                <input id="confirm_new_pass_id" type="password" value="" class="confirm_new_pass form-control">
-                <label for="form">Confirm Password</label>
+
+            <div class="row g-3 mt-2">
+                <div class="col-12 col-md-8">
+                    <label class="form-label pass" for="current_pass">Mật khẩu hiện tại</label>
+                    <input id="current_pass" type="password" autocomplete="on" class="pass form-control" placeholder="Nhập mật khẩu hiện tại" />
+                    <div id="cur_pass_err" class="form-error"></div>
+                </div>
+
+                <div class="col-12 col-md-8 confirm_new_pass">
+                    <label class="form-label" for="new_password_id">Mật khẩu mới</label>
+                    <input id="new_password_id" type="password" class="new_password form-control" placeholder="Nhập mật khẩu mới" />
+                    <div id="new_pass_err" class="form-error"></div>
+                </div>
+
+                <div class="col-12 col-md-8 confirm_new_pass">
+                    <label class="form-label" for="confirm_new_pass_id">Xác nhận mật khẩu</label>
+                    <input id="confirm_new_pass_id" type="password" class="confirm_new_pass form-control" placeholder="Nhập lại mật khẩu" />
+                    <div id="confim_pass_err" class="form-error"></div>
+                </div>
             </div>
-            <div class="row ms-1 d-flex">
-                <input id="update_btn" class="btn but col-md-3 user-btn btn-lg" autocomplete="on" type="button"
-                    value="Update" /></input>
-                <input class="ml-2 btn col-md-3 but clear-btn btn-lg" type="reset" autocomplete="on" value="Reset" />
+
+            <div class="row g-3 mt-3">
+                <div class="col-auto">
+                    <input id="update_btn" class="btn but user-btn" autocomplete="on" type="button" value="Cập nhật" />
+                </div>
+                <div class="col-auto">
+                    <input class="btn but clear-btn btn-outline" type="reset" autocomplete="on" value="Đặt lại" />
+                </div>
             </div>
-            <div class="row ms-1 d-flex">
-                <input id="verify_pass" class="btn but_new col-md-3 user-btn btn-lg" autocomplete="on" type="button"
-                    value="verify" /></input>
-            </div>
-            <div class="row ms-1 d-flex">
-                <input id="Update_pass" class="btn Update_pass col-md-3 user-btn btn-lg" autocomplete="on" type="button"
-                    value="Update" /></input>
+
+            <div class="row g-3 mt-2">
+                <div class="col-auto">
+                    <input id="verify_pass" class="btn but_new user-btn" autocomplete="on" type="button" value="Xác thực" />
+                </div>
+                <div class="col-auto">
+                    <input id="Update_pass" class="btn Update_pass user-btn" autocomplete="on" type="button" value="Cập nhật mật khẩu" />
+                </div>
             </div>
         </form>
     </div>
-
 </div>

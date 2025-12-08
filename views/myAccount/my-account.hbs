@@ -7,6 +7,9 @@
 
   <div class="card p-2 d-flex flex-row justify-content-between mt-3">
     <div class="d-flex flex-column">
+      <p class="h6 fw-bold text-second">
+        ID người dùng: <span class="fw-normal">{{userData._id}}</span>
+      </p>
       <p class="h5 fw-bold">
         Họ và tên: <span class="fw-normal">{{userData.user_name}}</span>
       </p>
@@ -42,7 +45,7 @@
   </div>
 
   <div class="d-flex flex-wrap justify-content-center">
-    <div class="card py-3 mt-3 me-3 align-items-center justify-content-center" style="width: 10rem;">
+    <div class="card py-3 mt-3 me-3 align-items-center justify-content-center" style="width: 12rem;">
       <a href="/orders" class="text-decoration-none d-flex flex-column align-items-center justify-content-center">
         <i class="fa-solid user-icon fa-box-archive fa-4x"></i>
         <h3 class="user-icon fw-bold">Đơn hàng</h3>
@@ -50,15 +53,15 @@
       </a>
     </div>
 
-    <div class="card py-3 mt-3 me-3 align-items-center justify-content-center" style="width: 10rem;">
+    <div class="card py-3 mt-3 me-3 align-items-center justify-content-center" style="width: 12rem;">
       <a href="/my-account/wishlist" class="text-decoration-none d-flex flex-column align-items-center justify-content-center">
         <i class="fa-regular user-icon fa-heart fa-4x"></i>
-        <h3 class="user-icon fw-bold">Danh sách yêu thích</h3>
+        <h3 class="user-icon fw-bold">Yêu thích</h3>
         <p class="h6 user-text fw-normal">Xem danh sách yêu thích</p>
       </a>
     </div>
 
-    <div class="card py-3 mt-3 me-3 align-items-center justify-content-center" style="width: 10rem;">
+    <div class="card py-3 mt-3 me-3 align-items-center justify-content-center" style="width: 12rem;">
       <a href="/cart" class="text-decoration-none d-flex flex-column align-items-center justify-content-center">
         <i class="fa-solid user-icon fa-cart-shopping fa-4x"></i>
         <h3 class="user-icon fw-bold">Giỏ hàng</h3>
@@ -66,7 +69,7 @@
       </a>
     </div>
 
-    <div class="card py-3 mt-3 align-items-center justify-content-center" style="width: 10rem;">
+    <div class="card py-3 mt-3 align-items-center justify-content-center" style="width: 12rem;">
       <a href="/my-account/edit-details/{{userData._id}}" class="text-decoration-none d-flex flex-column align-items-center justify-content-center">
         <i class="fa-solid user-icon fa-user-pen fa-4x"></i>
         <h3 class="user-icon fw-bold">Chỉnh sửa</h3>

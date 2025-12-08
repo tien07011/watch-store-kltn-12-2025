@@ -99,6 +99,13 @@ p { color: var(--muted-text); margin: 0 0 1rem 0; }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-success { background: var(--success); color: #fff; }
 
+/* Signup specific */
+.signup-card { border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+.signup-form { max-width: 520px; }
+.form-error { display:block; margin-top:.35rem; color: var(--danger); font-size:.9rem; }
+.input-group { position: relative; }
+.input-group .toggle { position:absolute; right:10px; top:50%; transform: translateY(-50%); }
+
 /* Forms */
 .input, .select, .textarea {
   width: 100%;
