@@ -1,3 +1,162 @@
+// Format prices to Vietnamese style: 1.500.000đ
+function formatVND(value) {
+    const n = Number(String(value).replace(/[^0-9]/g, ''));
+    if (!Number.isFinite(n)) return value;
+    // format with dot as thousand separator
+    const formatted = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return formatted + 'đ';
+}
+
+function applyPriceFormatting() {
+    // format elements with class .product-price
+    document.querySelectorAll('.product-price').forEach(el => {
+        const raw = el.textContent;
+        el.textContent = formatVND(raw);
+    });
+    // format price badges inside product cards (right-top badge)
+    document.querySelectorAll('.product-card .badge').forEach(el => {
+        // try to detect badges that are price (contains digits)
+        if (/\d/.test(el.textContent)) {
+            el.textContent = formatVND(el.textContent);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    applyPriceFormatting();
+    initClientSearchAndSort();
+});
+
+function initClientSearchAndSort(){
+    const input = document.getElementById('smart-search-input');
+    const sortRadios = document.querySelectorAll('.filter-sort');
+    const catChecks = document.querySelectorAll('.filter-button');
+    const brandChecks = document.querySelectorAll('.filter-brand');
+    const colorChecks = document.querySelectorAll('.filter-color');
+    const grid = document.querySelector('.product-grid');
+
+    // Sync UI from URL params if present
+    (function syncFromParams(){
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get('q');
+        const sort = params.get('sort');
+        const cats = params.getAll('category');
+        const brands = params.getAll('brand');
+        const colors = params.getAll('color');
+
+        if (q && input) input.value = q;
+        if (sort){
+            sortRadios.forEach(r => { r.checked = (r.value.split('=')[1] === sort); });
+        }
+        if (cats.length){
+            catChecks.forEach(c => {
+                const val = c.value.split('=')[1];
+                c.checked = cats.includes(val);
+            });
+        }
+        if (brands.length){
+            brandChecks.forEach(c => {
+                const val = c.value.split('=')[1];
+                c.checked = brands.includes(val);
+            });
+        }
+        if (colors.length){
+            colorChecks.forEach(c => {
+                const val = c.value.split('=')[1];
+                c.checked = colors.includes(val);
+            });
+        }
+    })();
+
+    function getActiveFilters(){
+        const cats = Array.from(catChecks).filter(c=>c.checked).map(c=>c.value.split('=')[1].toLowerCase());
+        const brands = Array.from(brandChecks).filter(c=>c.checked).map(c=>c.value.split('=')[1].toLowerCase());
+        const colors = Array.from(colorChecks).filter(c=>c.checked).map(c=>c.value.split('=')[1].toLowerCase());
+        const sortVal = Array.from(sortRadios).find(r=>r.checked)?.value.split('=')[1] || null;
+        const q = (input?.value || '').trim().toLowerCase();
+        return { cats, brands, colors, sortVal, q };
+    }
+
+    function normalizeVN(str){
+        return (str || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase();
+    }
+
+    function matchesFilters(card, filters){
+        const name = card.getAttribute('data-name') || '';
+        const brand = card.getAttribute('data-brand') || '';
+        const color = card.getAttribute('data-color') || '';
+        const category = card.getAttribute('data-category') || '';
+        const priceStr = card.getAttribute('data-price') || '0';
+        const price = Number(priceStr);
+
+        // text search across name, brand, color
+        if (filters.q){
+            const qn = normalizeVN(filters.q);
+            const hay = normalizeVN(name + ' ' + brand + ' ' + color);
+            if (!hay.includes(qn)) return false;
+        }
+        // category filter (server stores id; we only have id on data-category)
+        if (filters.cats.length){
+            // when categories are names, try name match fallback (not available here), so skip if not matching id
+            const catMatch = filters.cats.some(c => c === (category || '').toLowerCase());
+            if (!catMatch) return false;
+        }
+        // brand filter
+        if (filters.brands.length){
+            const bn = normalizeVN(brand);
+            const ok = filters.brands.some(b => normalizeVN(b) === bn);
+            if (!ok) return false;
+        }
+        // color filter
+        if (filters.colors.length){
+            const cn = normalizeVN(color);
+            const ok = filters.colors.some(c => normalizeVN(c) === cn);
+            if (!ok) return false;
+        }
+        // price exists
+        return Number.isFinite(price);
+    }
+
+    function sortCards(cards, sortVal){
+        if (!sortVal) return cards;
+        if (sortVal === 'low-high'){
+            return cards.sort((a,b)=> Number(a.getAttribute('data-price')) - Number(b.getAttribute('data-price')));
+        }
+        if (sortVal === 'high-low'){
+            return cards.sort((a,b)=> Number(b.getAttribute('data-price')) - Number(a.getAttribute('data-price')));
+        }
+        if (sortVal === 'new-first'){
+            // if createdAt is available as data attr, use it; else keep order
+            return cards;
+        }
+        return cards;
+    }
+
+    function render(){
+        const filters = getActiveFilters();
+        const cards = Array.from(document.querySelectorAll('.product-card'));
+        const matched = cards.filter(c => matchesFilters(c, filters));
+        const sorted = sortCards(matched, filters.sortVal);
+        // clear grid and append
+        if (grid){
+            grid.innerHTML = '';
+            sorted.forEach(c => grid.appendChild(c));
+        }
+    }
+
+    // Bind events
+    input?.addEventListener('input', ()=>{
+        // debounce minimal
+        clearTimeout(input.__t);
+        input.__t = setTimeout(render, 200);
+    });
+    [...sortRadios, ...catChecks, ...brandChecks, ...colorChecks].forEach(el=>{
+        el.addEventListener('change', render);
+    });
+
+    // initial
+    render();
+}
 // /admin/products/add-product
 
 $("#image").on("change", function () {

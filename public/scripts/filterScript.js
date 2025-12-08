@@ -28,15 +28,15 @@ $(document).ready(() => {
         }
     });
 
-    if (params.length === 0) {
-        $('.brand').hide()
-        $('.category').hide();
-        $('.color').hide();
-    } else {
-        $('.brand').show()
-        $('.category').show();
-        $('.color').show();
-    }
+    // if (params.length === 0) {
+    //     $('.brand').hide()
+    //     $('.category').hide();
+    //     $('.color').hide();
+    // } else {
+    //     $('.brand').show()
+    //     $('.category').show();
+    //     $('.color').show();
+    // }
 
     // filtering by category
     $('.filter-button').on('click', (e) => {

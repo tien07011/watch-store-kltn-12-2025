@@ -3,35 +3,35 @@
     <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-9 col-lg-6 col-xl-5 d-flex justify-content-center align-items-center">
         <img src="/images/login.png"
-          class="img-fluid" style="width: 25rem;" alt="Sample image">
+          class="img-fluid" style="width: 25rem;" alt="Ảnh đăng nhập">
       </div>
       <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 shadow px-3 mb-2 bg-white rounded px-4 py-4">
         <div class="login d-flex justify-content-center align-items-center ">
-          <h4 class="card-title user-text fw-bold">Login</h4>
+          <h4 class="card-title user-text fw-bold">Đăng nhập</h4>
         </div>
-        <hr style="height: 2px;" class="user-btn">
+        {{!-- <hr style="height: 2px;" class="user-btn"> --}}
         <form action="/login" method="POST" id="loginForm">
           <!-- Email input -->
           <div class="form-outline mb-1">
             {{#if err}}
             <span style="color: red;">{{err.msg}}</span>
             {{/if}}
-            <h6 class="form-label labell fw-bold" for="form3Example3">Email address</h6>
+            <h6 class="form-label labell fw-bold" for="form3Example3">Địa chỉ email</h6>
             <input type="email" id="form3Example3" name="email" class="form-control form-control-lg"
-              placeholder="Enter your Email" required />
+              placeholder="Nhập email của bạn" required />
           </div>
           <!-- Password input -->
           <div class="form-outline mb-1">
-            <h6 class="form-label labell fw-bold" for="form3Example4 ">Password</h6>
+            <h6 class="form-label labell fw-bold" for="form3Example4 ">Mật khẩu</h6>
             <input type="password" id="form3Example4" name="password" class="form-control form-control-lg"
-              placeholder="Enter password" required />
+              placeholder="Nhập mật khẩu" required />
             <label></label>
           </div>
           <div class="form-outline mb-2" style="width: 100%; margin-top:-20px">
-            <a href="/sign-up" class="sign-up-link ">don't have account? signup</a>
+            <a href="/sign-up" class="sign-up-link ">Chưa có tài khoản? Đăng ký</a>
           </div>
           <div class="text-center text-lg-start d-flex justify-content-center align-items-center ">
-            <button type="submit" class="btn user-btn btn-lg" style="padding:0.5em 5rem">Login</button>
+            <button type="submit" class="btn user-btn btn-lg" style="padding:0.5em 5rem">Đăng nhập</button>
           </div>
 
         </form>
