@@ -1,6 +1,6 @@
 <div style="width: 100%;" class="conatiner-fluid mt-3">
     <div class="h3 fw-bold user-text">
-        Your Orders
+        Đơn hàng của bạn
     </div>
     <div class="row col-md-12">
         {{#each orderDetails}}
@@ -8,9 +8,9 @@
             <div role="button" class="orders px-3 py-2 mb-4  card">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="orde-details">
-                        <div class="h6">Order: {{toDateAndTime this.createdAt}}</div>
+                        <div class="h6">Đơn hàng: {{toDateAndTime this.createdAt}}</div>
                         <span class="">
-                            <span class="fw-bold">payment:</span> {{this.payment_method}}<br>
+                            <span class="fw-bold">Thanh toán:</span> {{this.payment_method}}<br>
                             <p class="h6">{{this.address.address_cust_name}},{{this.address.phone }}</p>
                             <p class="text-normal">
                                 {{this.address.house_name}}(H),
@@ -30,9 +30,9 @@
                     </div>
                     {{#if this.coupon}}
                     <div class="coupendetails">
-                        Offer Applied
+                        Đã áp dụng khuyến mãi
                         <div class="copen bg-warning rounded px-1">{{this.coupon.code}} </div>
-                        <div class="copen fw-bold px-1">{{this.coupon.discount}}%off</div>
+                        <div class="copen fw-bold px-1">Giảm {{this.coupon.discount}}%</div>
                     </div>
                     {{/if}}
 
@@ -43,12 +43,12 @@
     </div>
     {{!-- pagination part --}}
     <div class="d-flex justify-content-center ">
-        <nav aria-label="Page navigation  example">
+        <nav aria-label="Điều hướng trang">
             <ul class="pagination">
                 <li class="page-item">
-                    <a id="prev" class="page-link" href="#" aria-label="Previous">
+                    <a id="prev" class="page-link" href="#" aria-label="Trước">
                         <span id="prev" aria-hidden="true">&laquo;</span>
-                        <span id="prev" class="sr-only">Previous</span>
+                        <span id="prev" class="sr-only">Trước</span>
                     </a>
                 </li>
                 {{#each arr}}
@@ -56,10 +56,10 @@
                 </li>
                 {{/each}}
                 <li class="page-item">
-                    <a id="next" class="page-link" href="#" aria-label="Next">
+                    <a id="next" class="page-link" href="#" aria-label="Sau">
                         <span id="next" aria-hidden="true">&raquo;</span>
                         <input id="lastOrder" type="hidden" value="{{last}}">
-                        <span id="next" class="sr-only">Next</span>
+                        <span id="next" class="sr-only">Sau</span>
                     </a>
                 </li>
             </ul>

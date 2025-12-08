@@ -1,6 +1,6 @@
 <div class="container">
   <div class="h3 fw-bold mt-3 user-text py-1">
-    Wish List
+    Danh sách yêu thích
   </div>
 
   <div class="row">
@@ -14,14 +14,14 @@
           <div class="col-8 col-md-10">
             <p class="h5 fw-bold">{{this.products.product_name}}</p>
             <p style="font-size: 0.8rem;">{{this.products.color}} &nbsp &nbsp
-              Brand: <span>{{this.products.brand_name}}</span></p>
+              Thương hiệu: <span>{{this.products.brand_name}}</span></p>
             <div class="d-flex align-items-center">
-              <p class="text-success fw-bold">₹{{this.products.selling_price}}</p>
-              <p style="text-decoration: line-through;" class="ms-5 text-muted">₹{{this.products.actual_price}}</p>
+              <p class="text-success fw-bold">{{formatVND this.products.selling_price}}</p>
+              <p style="text-decoration: line-through;" class="ms-5 text-muted">{{formatVND this.products.actual_price}}</p>
             </div>
             <div class="d-flex align-items-center">
-              <input onclick="addToCart('{{this.products._id}}')" type="button" value="Add to cart" class="btn user-btn">
-              <input type="button" value="remove" onclick="remove_wishlist('{{this.products._id}}')" style="cursor:pointer" class="ms-3 btn clear-btn">
+              <input onclick="addToCart('{{this.products._id}}')" type="button" value="Thêm vào giỏ" class="btn user-btn">
+              <input type="button" value="Xóa" onclick="remove_wishlist('{{this.products._id}}')" style="cursor:pointer" class="ms-3 btn clear-btn">
             </div>
           </div>
         </div>
@@ -35,13 +35,13 @@
     $(document).ready(() => {
         remove_wishlist = async (id) => {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Are you sure want to remove this product from wishlist",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, remove it!'
+              title: 'Bạn có chắc không?',
+              text: "Bạn có chắc muốn xóa sản phẩm này khỏi danh sách yêu thích",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Đồng ý xóa'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     await fetch(`/my-account/remove-from-wishlist/${id}`, {
