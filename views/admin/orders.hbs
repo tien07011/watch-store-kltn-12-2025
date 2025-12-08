@@ -1,5 +1,5 @@
 <section class="category d-flex mt-2 " style="width: 100%;">
-  <div class="object-fit-contain mt-3" style="width: 98%;">
+  <div class="object-fit-contain mt-3" style="width: 100%;">
     <div class="header d-flex justify-content-between">
       <h3 class="h3 text-second fw-bold mb-3">Orders</h3>
     </div>
@@ -40,7 +40,7 @@
             PH: {{this.address.phone}}
           </td>
           <td>({{this.items.quantity}}),
-            {{this.items.price}}
+            {{formatVND this.items.price}}
           </td>
           <td {{#if this.items.cancelled_on}} class="text-danger fw-bold" {{/if}}>{{this.items.status}}</td>
           <td><a href="/admin/orders/view-invoice?productId={{this.items.product_id}}&orderId={{this._id}}">view</a>

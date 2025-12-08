@@ -31,7 +31,7 @@
             <div class="col-md-6">
                 <label for="form-control">Price</label>
                 <input type="hidden" name="product_id" value="{{showOrder.items.product_id}}">
-                <input type="text" c value="{{showOrder.items.price}}" class="form-control " readonly>
+                <input type="text" c value="{{formatVND showOrder.items.price}}" class="form-control " readonly>
             </div>
             <div class="col-md-6">
                 <label for="form-control">Status</label>

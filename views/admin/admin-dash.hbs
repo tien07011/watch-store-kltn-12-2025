@@ -1,5 +1,5 @@
-<div class="container mt-4" style="max-width:57rem; max-height:500rem">
-    <div class="header d-flex justify-content-between">
+<div class="container mt-4" style="max-height:500rem">
+    {{!-- <div class="header d-flex justify-content-between">
         <h3 class="h3 text-second fw-bold mb-3">Dash Board</h3>
         <div class="wrap-year d-flex">
             <p class="fw-bold h6 mt-2 me-1">Year</p>
@@ -11,12 +11,12 @@
         </div>
     </div>
 
-    <canvas id="myChart" style="width:100%;margin-right:3rem;margin-top:-1.5rem"></canvas>
+    <canvas id="myChart" style="width:100%;margin-right:3rem;margin-top:-1.5rem"></canvas> --}}
 
     <div class="details d-flex justify-content-around mb-3 ">
-        <div class="d-flex rounded flex-column align-items-center px-4 justify-content-center bg-success fw-bold">
-            <p class="text-white mt-4" style="margin-bottom:-10px;">Total Revenue</p>
-            <p class="text-white fw-bold fa-2x">₹{{totalRevenew}}/-</p>
+        <div class="d-flex rounded flex-column align-items-center px-4 justify-content-center stat-card">
+            <p class="mt-4 stat-title" style="margin-bottom:-10px;">Total Revenue</p>
+            <p class="fw-bold fa-2x stat-value">{{formatVND totalRevenew}}</p>
         </div>
         <div class="d-flex rounded flex-column align-items-center px-4 justify-content-center add-btn fw-bold">
             <p class="text-white mt-4" style="margin-bottom:-10px;">Total Customers</p>
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="wrap-year d-flex justify-content-betweem">
+    {{!-- <div class="wrap-year d-flex justify-content-betweem">
         <p class="fw-bold h6 mt-2 me-1">Today</p>
         <input type="checkbox" class="me-5 " name="day" id="1day">
 
@@ -37,7 +37,7 @@
         
         <p class="fw-bold h6 ms-5 mt-2 me-1">This Week</p>
         <input type="checkbox" class="me-5 ms-2 " name="week" value="1" id="week">
-    </div>
+    </div> --}}
 
     <table style="width: 100%;" id="exportToTable" class="table mt-5 table-striped table-bordered table-sm"
         cellspacing="0" width="100%">
@@ -65,7 +65,7 @@
                 {{/if}}
                 <td>{{this.items.quantity}}</td>
                 <td>{{this.payment_method}}</td>
-                <td>{{this.items.price}}</td>
+                <td>{{formatVND this.items.price}}</td>
             </tr>
             {{/each}}
         </tbody>

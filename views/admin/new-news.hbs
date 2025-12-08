@@ -1,32 +1,34 @@
-{{> admin-header}}
-{{> admin-sidebar}}
-<div class="admin-container">
-  <h1>Thêm tin tức</h1>
-  <form method="post" action="/admin/news" enctype="multipart/form-data">
-    <label>Tiêu đề</label>
-    <input type="text" name="title" required />
+<section class="category d-flex mt-2" style="width: 100%;">
+  <div class="object-fit-contain mt-3" style="width: 100%;">
+    <div class="header d-flex justify-content-between align-items-center">
+      <h3 class="h3 text-second fw-bold mb-3">Thêm tin tức</h3>
+    </div>
+    <form class="card px-3 py-3" method="post" action="/admin/news" enctype="multipart/form-data">
+      <label class="mb-1">Tiêu đề</label>
+      <input class="form-control mb-3" type="text" name="title" required />
 
-    <label>Tóm tắt</label>
-    <textarea name="summary" rows="3" required></textarea>
+      <label class="mb-1">Tóm tắt</label>
+      <textarea class="form-control mb-3" name="summary" rows="3" required></textarea>
 
-    <label>Nội dung</label>
-    <textarea id="editor" name="content" required></textarea>
+      <label class="mb-1">Nội dung</label>
+      <textarea class="form-control mb-3" id="editor" name="content" required></textarea>
 
-    <label>Ảnh bìa</label>
-    <input type="file" name="coverImage" accept="image/*" />
+      <label class="mb-1">Ảnh bìa</label>
+      <input class="form-control mb-3" type="file" name="coverImage" accept="image/*" />
 
-    <label>Tags (phân cách bằng dấu phẩy)</label>
-    <input type="text" name="tags" />
+      <label class="mb-1">Tags (phân cách bằng dấu phẩy)</label>
+      <input class="form-control mb-3" type="text" name="tags" />
 
-    <label>Trạng thái</label>
-    <select name="status">
-      <option value="published">Xuất bản</option>
-      <option value="draft">Nháp</option>
-    </select>
+      <label class="mb-1">Trạng thái</label>
+      <select class="form-select mb-3" name="status">
+        <option value="published">Xuất bản</option>
+        <option value="draft">Nháp</option>
+      </select>
 
-    <button type="submit" class="btn">Lưu</button>
-  </form>
-</div>
+      <button type="submit" class="btn add-btn">Lưu</button>
+    </form>
+  </div>
+</section>
 
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 <script>

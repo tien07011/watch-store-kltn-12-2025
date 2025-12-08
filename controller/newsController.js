@@ -52,14 +52,14 @@ exports.detail = async (req, res, next) => {
 exports.adminList = async (req, res, next) => {
   try {
     const items = await News.find({}).sort({ createdAt: -1 });
-    res.render('admin/news-list', { items, title: 'Quản lý tin tức' });
+    res.render('admin/news-list', { items, title: 'Quản lý tin tức', admin: true, Admin: res.locals.admin, footer: false });
   } catch (err) {
     next(err);
   }
 };
 
 exports.newForm = (req, res) => {
-  res.render('admin/new-news', { title: 'Thêm tin tức' });
+  res.render('admin/new-news', { title: 'Thêm tin tức', admin: true, Admin: res.locals.admin, footer: false });
 };
 
 exports.create = async (req, res, next) => {
@@ -85,7 +85,7 @@ exports.editForm = async (req, res, next) => {
     const id = req.params.id;
     const item = await News.findById(id);
     if (!item) return res.status(404).render('error/404');
-    res.render('admin/edit-news', { item, title: 'Sửa tin tức' });
+    res.render('admin/edit-news', { item, title: 'Sửa tin tức', admin: true, Admin: res.locals.admin, footer: false });
   } catch (err) {
     next(err);
   }
