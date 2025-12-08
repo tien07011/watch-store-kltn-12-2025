@@ -16,10 +16,12 @@
 
 /* Global */
 body { background: var(--background); color: var(--textcolor); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+/* Prevent global horizontal scroll while allowing local scroll */
+html, body { max-width: 100vw; overflow-x: hidden; }
 
 /* Make admin layout full-width, no side padding (admin only) */
 .admin-shell { max-width: 100% !important; width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; }
-.admin-shell main.card { padding: 0 !important; }
+.admin-shell main.card { padding: 0 !important; overflow-x: auto; }
 .admin-shell .category, .admin-shell .object-fit-contain { width: 100% !important; }
 
 .header { background: linear-gradient(90deg, #e8eefc, #f3f6fb); border: 1px solid var(--border); border-radius: var(--radius-md); padding: .75rem 1rem; box-shadow: var(--shadow-sm); }
@@ -77,11 +79,28 @@ body { background: var(--background); color: var(--textcolor); font-family: Inte
 }
 
 /* Tables */
-.table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.table { width: 100% !important; max-width: 100% !important; border-collapse: separate; border-spacing: 0; }
 .table th, .table td { border-bottom: 1px solid var(--border); padding: .7rem .9rem; text-align: left; }
 .table th { background: #f8fafc; color: var(--muted-text); font-weight: 600; position: sticky; top: 0; z-index: 1; }
 .table tr:hover { background: #f9fbff; }
 .table tbody tr:nth-child(odd) { background: #fbfdff; }
+
+/* Force common admin tables to be responsive even if inline widths are set */
+table#example,
+table#exportToTable { width: 100% !important; max-width: 100% !important; }
+
+/* Allow table containers to scroll instead of page */
+.table-responsive,
+.panel-body,
+.card,
+main,
+.content { overflow-x: auto; }
+
+/* Make cells wrap to reduce overflow on narrow screens */
+.table th, .table td { white-space: nowrap; }
+@media (max-width: 900px) {
+    .table th, .table td { white-space: normal; word-break: break-word; }
+}
 
 /* Cards and panels */
 .panel, .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
