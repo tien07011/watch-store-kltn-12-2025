@@ -34,7 +34,7 @@ function listImages(relativeDir) {
 async function seed(options = {}) {
   const {
     categoryCount = 6,
-    productCount = 40,
+    productCount = 10,
     bannerCount = 4,
     userCount = 10,
     reviewCount = 30,
@@ -77,11 +77,19 @@ async function seed(options = {}) {
   const defaultPasswordHash = bcrypt.hashSync('123456', 10);
 
   // Categories
-  const categories = Array.from({ length: categoryCount }, () => ({
-    cat_name: fakerVI.commerce.department(),
-    description: fakerVI.lorem.sentence(),
-    cat_status: true,
-  }));
+  const categories = [
+    {
+      cat_name: 'Đồng hồ nam',
+      description: 'Sản phẩm dành cho nam',
+      cat_status: true,
+    },
+    {
+      cat_name: 'Đồng hồ nữ',
+      description: 'Sản phẩm dành cho nữ',
+      cat_status: true,
+    },
+  ];
+
   const createdCategories = await Category.insertMany(categories);
 
   // Products

@@ -27,7 +27,7 @@
   </div>
 
   <hr>
-  <div class="h3 text-center fw-bold">Watches</div>
+  <div class="h3 text-center fw-bold">Đồng hồ</div>
   <hr>
 
   <div class="row">
@@ -38,12 +38,12 @@
         <h5 class="card-title">{{this.product_name}}</h5>
         <p class="card-text d-flex justify-content-between align-items-center">
           <span>{{this.color}}</span>
-          <span class="fw-bold text-success">₹{{this.selling_price}}</span>
-          <span style="text-decoration: line-through;" class="fw-normal text-secondary">₹{{this.actual_price}}</span>
+          <span class="fw-bold text-success">{{this.selling_price}}VNĐ</span>
+          <span style="text-decoration: line-through;" class="fw-normal text-secondary">{{this.actual_price}}VNĐ</span>
         </p>
         <div class="d-flex justify-content-between">
-          <a href="/view_product/{{this._id}}" class="btn btn-primary">Buy Now</a>
-          <a onclick="addToCart('{{this._id}}')" class="btn btn-outline">Add to Cart</a>
+          <a href="/view_product/{{this._id}}" class="btn btn-primary">Mua ngay</a>
+          <a onclick="addToCart('{{this._id}}')" class="btn btn-outline">Thêm vào giỏ</a>
         </div>
       </div>
     </div>
