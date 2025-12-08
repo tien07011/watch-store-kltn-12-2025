@@ -5,7 +5,7 @@
   }
   const socket = window.io ? io() : null;
 
-  const state = { open: false };
+  const state = { open: false, loaded: false, seenIds: new Set() };
 
   const box = document.createElement('div');
   box.id = 'chat-widget-box';
@@ -29,7 +29,7 @@
       <div id="chat-messages"></div>
       <div id="chat-input">
         <input id="chat-text" type="text" placeholder="Nhập tin nhắn..." />
-        <button id="chat-send">Gửi</button>
+        <button id="chat-send" type="button">Gửi</button>
       </div>
     </div>
   `;
@@ -52,9 +52,41 @@
   toggle.addEventListener('click', () => {
     state.open = !state.open;
     panel.style.display = state.open ? 'block' : 'none';
+
+    // Enforce login requirement: show notice if not logged in
+    if (state.open && !sessionUser) {
+      const div = document.createElement('div');
+      div.className = 'chat-msg chat-admin';
+      div.textContent = 'Vui lòng đăng nhập để sử dụng hỗ trợ trực tuyến.';
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return;
+    }
+
+    // Load conversation history on first open
+    if (state.open && sessionUser && !state.loaded) {
+      fetch(`/chat/conversation/me?limit=50`)
+        .then((r) => r.ok ? r.json() : Promise.reject(r))
+        .then((data) => {
+          if (data && data.ok && Array.isArray(data.messages)) {
+            messagesEl.innerHTML = '';
+            data.messages.forEach((msg) => {
+              const mine = msg.senderModel === 'User';
+              renderMsg(msg, mine);
+            });
+            state.loaded = true;
+          }
+        })
+        .catch(() => {
+          const err = document.createElement('div');
+          err.className = 'chat-msg chat-admin';
+          err.textContent = 'Không thể tải lịch sử chat.';
+          messagesEl.appendChild(err);
+        });
+    }
   });
 
-  const sessionUser = window.__USER__ || null; // optional: inject from server template
+  const sessionUser = window.__USER__ || null;
   if (socket && sessionUser && sessionUser._id) {
     socket.emit('join', { userId: sessionUser._id, role: 'user' });
   }
@@ -62,27 +94,48 @@
   if (socket) {
     socket.on('chat:message', (msg) => {
       console.log('[chatWidget] chat:message', msg);
+      // Deduplicate if server provides message id
+      if (msg && msg._id) {
+        if (state.seenIds.has(String(msg._id))) return;
+        state.seenIds.add(String(msg._id));
+      }
       const mine = msg.senderModel === 'User';
       renderMsg(msg, mine);
     });
   }
 
+  let sending = false;
+  let lastSendAt = 0;
+  let lastContent = '';
+
   const send = () => {
     const content = inputEl.value.trim();
     if (!content) return;
+    const now = Date.now();
+    if (sending && now - lastSendAt < 300) return;
+    if (content === lastContent && now - lastSendAt < 1000) return;
+    lastContent = content;
+    lastSendAt = now;
+    sending = true;
+    setTimeout(() => { sending = false; }, 300);
     inputEl.value = '';
-    renderMsg({ content }, true);
     if (socket && sessionUser && sessionUser._id) {
       socket.emit('chat:message', { fromUserId: sessionUser._id, content, senderRole: 'user' });
     } else {
-      // fallback via REST
-      fetch('/chat/message', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
-      });
+      // Not logged in: prompt user
+      const warn = document.createElement('div');
+      warn.className = 'chat-msg chat-admin';
+      warn.textContent = 'Bạn cần đăng nhập trước khi gửi tin nhắn.';
+      messagesEl.appendChild(warn);
     }
   };
 
   sendBtn.addEventListener('click', send);
-  inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.isComposing || e.keyCode === 229) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      send();
+    }
+  });
 })();

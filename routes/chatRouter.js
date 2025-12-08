@@ -4,6 +4,9 @@ const chatController = require('../controller/chatController');
 const { authenicateUser, isAdminloggedIn } = require('../middlewares/authMiddleware');
 
 // User fetch conversation with admin
+router.get('/conversation/me', authenicateUser, chatController.getMyConversation);
+
+// Admin fetch a specific user's conversation
 router.get('/conversation/:userId', isAdminloggedIn, chatController.getConversation);
 
 // Admin list conversations

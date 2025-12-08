@@ -24,6 +24,32 @@ exports.getConversation = async (req, res, next) => {
   }
 };
 
+// Get conversation for the currently authenticated user
+exports.getMyConversation = async (req, res, next) => {
+  try {
+    const user = res.locals.userData;
+    if (!user || !user._id) {
+      return res.status(401).json({ ok: false, message: 'Unauthorized' });
+    }
+
+    const limit = Number(req.query.limit || 50);
+    const userId = String(user._id);
+    const messages = await Message.find({
+      $or: [
+        { senderId: userId, senderModel: 'User', recipientModel: 'Admin' },
+        { recipientId: userId, recipientModel: 'User', senderModel: 'Admin' },
+      ],
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    res.json({ ok: true, messages: messages.reverse() });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // List users who have messaged (for admin dashboard)
 exports.listConversations = async (req, res, next) => {
   try {

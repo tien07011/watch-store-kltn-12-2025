@@ -120,7 +120,8 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  window.__USER__ = {{#if user}}{{{json user}}}{{else}}null{{/if}};
+  window.__USER__ = {{#if userData}}{{{json userData}}}{{else}}null{{/if}};
+  window.__ADMIN__ = {{#if admin}}{{{json admin}}}{{else}}null{{/if}};
   </script>
 {{!-- Only include user chat widget on non-admin pages --}}
 {{#unless admin}}

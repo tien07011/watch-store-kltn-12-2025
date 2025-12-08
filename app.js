@@ -170,20 +170,25 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('chat:message', async ({ fromUserId, toUserId, content, senderRole }) => {
+  socket.on('chat:message', async ({ fromUserId, fromAdminId, toUserId, content, senderRole }) => {
     try {
       if (!content) return;
-      console.log('[socket] chat:message recv', { fromUserId, toUserId, senderRole, content });
+      console.log('[socket] chat:message recv', { fromUserId, fromAdminId, toUserId, senderRole, content });
       let senderId, senderModel, recipientId, recipientModel;
       if (senderRole === 'admin') {
-        // Use toUserId as the target user room, include routing hints for admin clients
-        const adminMsg = { content, senderModel: 'Admin', recipientModel: 'User', recipientId: toUserId };
-        if (toUserId) {
-          console.log('[socket] emit to user room', `user:${toUserId}`);
-          io.to(`user:${toUserId}`).emit('chat:message', adminMsg);
+        // Persist admin message and emit unified payload
+        senderId = fromAdminId;
+        senderModel = 'Admin';
+        recipientId = toUserId;
+        recipientModel = 'User';
+        if (!senderId || !recipientId) {
+          console.warn('[socket] missing IDs for admin message', { senderId, recipientId });
+          return;
         }
-        console.log('[socket] emit to admins');
-        io.to('admins').emit('chat:message', adminMsg);
+        const msg = await Message.create({ senderId, senderModel, recipientId, recipientModel, content });
+        console.log('[socket] persist admin msg', msg._id);
+        io.to(`user:${recipientId}`).emit('chat:message', { ...msg.toObject() });
+        io.to('admins').emit('chat:message', { ...msg.toObject() });
         return;
       } else {
         senderId = fromUserId;

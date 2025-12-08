@@ -54,12 +54,18 @@
     if (!content || !currentUser) return;
     inputEl.value = '';
     renderMsg({ content }, true);
-    socket.emit('chat:message', { fromUserId: currentUser._id, toUserId: currentUser._id, content, senderRole: 'admin' });
-    await fetch('/chat/admin/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toUserId: currentUser._id, content }) });
+    const admin = window.__ADMIN__;
+    socket.emit('chat:message', { fromAdminId: admin?._id, toUserId: currentUser._id, content, senderRole: 'admin' });
   };
 
   sendBtn.addEventListener('click', send);
-  inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.isComposing || e.keyCode === 229) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      send();
+    }
+  });
 
   socket.on('chat:message', (msg) => {
     console.log('[adminChat] chat:message', msg);
