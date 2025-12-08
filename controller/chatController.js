@@ -130,6 +130,79 @@ exports.postMessage = async (req, res, next) => {
       content,
     });
 
+    // Emit via Socket.IO if available
+    try {
+      const io = req.app.get('io');
+      if (io) {
+        if (senderModel === 'Admin') {
+          io.to(`user:${recipientId}`).emit('chat:message', { ...msg.toObject() });
+          io.to('admins').emit('chat:message', { ...msg.toObject() });
+        } else {
+          io.to(`user:${senderId}`).emit('chat:message', { ...msg.toObject() });
+          io.to('admins').emit('chat:message', { ...msg.toObject() });
+        }
+      }
+    } catch (_) {}
+
+    res.json({ ok: true, message: msg });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Post an image message
+exports.postImageMessage = async (req, res, next) => {
+  try {
+    const file = req.file;
+    const isAdmin = Boolean(res.locals.admin);
+    const toUserId = req.body.toUserId;
+
+    if (!file) {
+      return res.status(400).json({ ok: false, message: 'No image uploaded' });
+    }
+
+    let senderId, senderModel, recipientId, recipientModel;
+    if (isAdmin) {
+      if (!toUserId) return res.status(400).json({ ok: false, message: 'Missing recipient userId' });
+      senderId = res.locals.admin._id;
+      senderModel = 'Admin';
+      recipientId = toUserId;
+      recipientModel = 'User';
+    } else {
+      if (!res.locals.userData) return res.status(401).json({ ok: false, message: 'Unauthorized' });
+      senderId = res.locals.userData._id;
+      senderModel = 'User';
+      const admin = await Admin.findOne().select('_id');
+      if (!admin) return res.status(500).json({ ok: false, message: 'Admin not found' });
+      recipientId = admin._id;
+      recipientModel = 'Admin';
+    }
+
+    const imageUrl = `/images/chat/${file.filename}`;
+    const msg = await Message.create({
+      senderId,
+      senderModel,
+      recipientId,
+      recipientModel,
+      imageUrl,
+      imageMime: file.mimetype,
+      imageSize: file.size,
+    });
+
+    // Emit via Socket.IO if available
+    try {
+      const io = req.app.get('io');
+      if (io) {
+        if (senderModel === 'Admin') {
+          io.to(`user:${recipientId}`).emit('chat:message', { ...msg.toObject() });
+          io.to('admins').emit('chat:message', { ...msg.toObject() });
+        } else {
+          io.to(`user:${senderId}`).emit('chat:message', { ...msg.toObject() });
+          io.to('admins').emit('chat:message', { ...msg.toObject() });
+        }
+      }
+    } catch (_) {}
+
     res.json({ ok: true, message: msg });
   } catch (err) {
     next(err);

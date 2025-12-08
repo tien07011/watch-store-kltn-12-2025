@@ -6,7 +6,10 @@ const MessageSchema = new mongoose.Schema(
     senderModel: { type: String, required: true, enum: ['User', 'Admin'] },
     recipientId: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: 'recipientModel' },
     recipientModel: { type: String, required: true, enum: ['User', 'Admin'] },
-    content: { type: String, required: true, trim: true },
+    content: { type: String, trim: true },
+    imageUrl: { type: String, trim: true },
+    imageMime: { type: String, trim: true },
+    imageSize: { type: Number },
     read: { type: Boolean, default: false },
   },
   { timestamps: true }

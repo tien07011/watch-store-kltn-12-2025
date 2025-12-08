@@ -16,9 +16,10 @@
       #chat-widget-panel { display:none; background:#fff; border:1px solid #ddd; border-radius:12px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.2); }
       #chat-header { background:#111; color:#fff; padding:10px 12px; }
       #chat-messages { height:280px; overflow:auto; padding:10px; }
-      #chat-input { display:flex; gap:8px; padding:10px; border-top:1px solid #eee; }
-      #chat-input input { flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:8px; }
+      #chat-input { display:flex; gap:8px; padding:10px; border-top:1px solid #eee; align-items:center; }
+      #chat-input input[type="text"] { flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:8px; }
       #chat-input button { padding:8px 12px; background:#111; color:#fff; border:none; border-radius:8px; }
+      #chat-input .outline { background:#fff; color:#111; border:1px solid #ddd; }
       .chat-msg { margin:6px 0; max-width:75%; padding:8px 10px; border-radius:10px; }
       .chat-me { background:#e6f3ff; margin-left:auto; }
       .chat-admin { background:#f3f3f3; margin-right:auto; }
@@ -29,6 +30,8 @@
       <div id="chat-messages"></div>
       <div id="chat-input">
         <input id="chat-text" type="text" placeholder="Nhập tin nhắn..." />
+        <input id="chat-image" type="file" accept="image/*" style="display:none;" />
+        <label for="chat-image" class="outline" style="padding:8px 12px; border-radius:8px; cursor:pointer; width:42px; height:38px; display:flex; align-items:center; justify-content:center;">📷</label>
         <button id="chat-send" type="button">Gửi</button>
       </div>
     </div>
@@ -44,7 +47,16 @@
   const renderMsg = (msg, mine) => {
     const div = document.createElement('div');
     div.className = `chat-msg ${mine ? 'chat-me' : 'chat-admin'}`;
-    div.textContent = msg.content;
+      if (msg.imageUrl) {
+        const img = document.createElement('img');
+        img.src = msg.imageUrl;
+        img.alt = 'image';
+        img.style.maxWidth = '240px';
+        img.style.borderRadius = '8px';
+        div.appendChild(img);
+      } else {
+        div.textContent = msg.content;
+      }
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   };
@@ -129,6 +141,31 @@
       messagesEl.appendChild(warn);
     }
   };
+
+    // Image sending elements (if present in DOM)
+    const imageInput = box.querySelector('#chat-image');
+    const imageBtn = null;
+    const sendImage = async () => {
+      if (!imageInput || !imageInput.files || imageInput.files.length === 0) return;
+      if (!socket || !sessionUser || !sessionUser._id) {
+        const warn = document.createElement('div');
+        warn.className = 'chat-msg chat-admin';
+        warn.textContent = 'Bạn cần đăng nhập trước khi gửi hình ảnh.';
+        messagesEl.appendChild(warn);
+        return;
+      }
+      const file = imageInput.files[0];
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await fetch('/chat/message/image', { method: 'POST', body: fd });
+      if (res.ok) {
+        const data = await res.json();
+        renderMsg(data.message, true);
+        imageInput.value = '';
+      }
+    };
+    // No explicit send-image button; auto-send on selection
+    if (imageInput) imageInput.addEventListener('change', sendImage);
 
   sendBtn.addEventListener('click', send);
   inputEl.addEventListener('keydown', (e) => {

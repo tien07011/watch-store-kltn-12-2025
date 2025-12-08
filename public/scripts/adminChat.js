@@ -7,6 +7,8 @@
   const messagesEl = document.getElementById('chat-messages');
   const inputEl = document.getElementById('chat-text');
   const sendBtn = document.getElementById('chat-send');
+  const imageInput = document.getElementById('chat-image');
+  const imageBtn = document.getElementById('chat-send-image');
   const headerEl = document.getElementById('chat-header');
 
   let currentUser = null;
@@ -44,7 +46,16 @@
     div.style.borderRadius = '10px';
     div.style.background = mine ? '#e6f3ff' : '#f3f3f3';
     div.style.marginLeft = mine ? 'auto' : '0';
-    div.textContent = msg.content;
+    if (msg.imageUrl) {
+      const img = document.createElement('img');
+      img.src = msg.imageUrl;
+      img.alt = 'image';
+      img.style.maxWidth = '240px';
+      img.style.borderRadius = '8px';
+      div.appendChild(img);
+    } else {
+      div.textContent = msg.content;
+    }
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   };
@@ -74,6 +85,23 @@
       renderMsg(msg, false);
     }
   });
+
+  const sendImage = async () => {
+    if (!currentUser || !imageInput || !imageInput.files || imageInput.files.length === 0) return;
+    const file = imageInput.files[0];
+    const fd = new FormData();
+    fd.append('image', file);
+    fd.append('toUserId', currentUser._id);
+    const res = await fetch('/chat/admin/message/image', { method: 'POST', body: fd });
+    if (res.ok) {
+      const data = await res.json();
+      renderMsg(data.message, true);
+      imageInput.value = '';
+    }
+  };
+
+  // No explicit send-image button; auto-send on selection
+  if (imageInput) imageInput.addEventListener('change', sendImage);
 
   loadConversations();
 })();

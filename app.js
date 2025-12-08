@@ -152,6 +152,9 @@ server.listen(PORT, () => {
   console.log(`server is running at port ${PORT}`)
 })
 
+// Expose io to routes/controllers
+app.set('io', io);
+
 // Socket.IO minimal chat handling
 const Message = require('./models/messageModel');
 const Admin = require('./models/adminModel');
