@@ -1,4 +1,8 @@
 $(document).ready(() => {
+        const formatVND = (value) => {
+            const num = Number(value) || 0;
+            return num.toLocaleString('vi-VN') + ' vnđ';
+        };
     $('.add-form').hide();
     $('.payment-options').hide();
 
@@ -77,14 +81,14 @@ $(document).ready(() => {
 
     $('.coupenss').hide();
     $('#checkCoupen').on('click', () => {
-
         $('.coupenss').show();
+        $('#coupensBackdrop').show();
         $('#proceedPayment').hide();
         $('#submitOrder').hide();
-
     });
     $('#back').on('click', () => {
         $('.coupenss').hide();
+        $('#coupensBackdrop').hide();
         $('#proceedPayment').show();
         $('#submitOrder').show();
     });
@@ -112,19 +116,20 @@ $(document).ready(() => {
                     discount.value = data.discount
                     let coupen_code = document.getElementById('coupen_code');
                     coupen_code.value = data.coupen_code
-                    productsElement.textContent = `₹${newTotalAmount}`;
-                    shippingElement.textContent = '₹ 0';
-                    totalAmountElement.textContent = `₹${newTotalAmount}`;
+                    productsElement.textContent = formatVND(newTotalAmount);
+                    shippingElement.textContent = formatVND(0);
+                    totalAmountElement.textContent = formatVND(newTotalAmount);
                     Showdiscount.textContent = `${data.discount}%`
                     console.log(Showdiscount);
                     $('.coupenss').hide();
+                    $('#coupensBackdrop').hide();
                     $('#proceedPayment').show();
                     $('#submitOrder').show();
                 } else {
                     Swal.fire(
-                        'Oops',
-                        `You need a minimum purchase of ₹${data.min_amount} to apply this coupon.`,
-                        'Err'
+                        'Có lỗi',
+                        `Bạn cần mua tối thiểu ${formatVND(data.min_amount)} để áp dụng mã này.`,
+                        'error'
                     );
                 }
             })

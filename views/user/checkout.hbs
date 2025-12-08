@@ -2,99 +2,59 @@
     <div class="container mt-3">
 
         <div class="header d-flex align-items-center justify-content-between">
-            <h3 class="h4 fw-bold mb-3">Checkout</h3>
-            <input id="addAddress" class="btn btn-outline" type="button" value="New Address">
+            <h3 class="h4 fw-bold mb-3">Thanh toán</h3>
+            <input id="addAddress" class="btn btn-outline" type="button" value="Thêm địa chỉ">
         </div>
         <div class="header d-flex flex-column align-items-center justify-content-between">
             {{!-- add address --}}
             <form action="/my-account/checkout/new-address" method="post" class=" add-form container">
                 <div class="row">
                     <div class="row col-md-6 me-3">
-                        <label for="form">Name</label>
+                        <label for="form">Họ và tên</label>
                         <input name="address_cust_name" type="text" class="form-control" required>
                     </div>
                     <div class="row col-md-6">
-                        <label for="form">Phone</label>
+                        <label for="form">Số điện thoại</label>
                         <input name="phone" type="text" class="form-control" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="row col-md-6 me-3">
-                        <label for="form">House Name</label>
+                        <label for="form">Tên nhà/Địa chỉ</label>
                         <input name="house_name" type="text" class="form-control" required>
                     </div>
                     <div class="row col-md-6">
-                        <label for="form">Area/Street</label>
+                        <label for="form">Phố/Đường</label>
                         <input name="area_street" type="text" class="form-control" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="row col-md-6 me-3">
-                        <label for="form">Locality</label>
+                        <label for="form">Phường/Xã</label>
                         <input name="locality" type="text" class="form-control" required>
                     </div>
                     <div class="row col-md-6">
-                        <label for="form">Town</label>
+                        <label for="form">Quận/Huyện</label>
                         <input name="town" type="text" class="form-control" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="row col-md-6 me-3">
-                        <label for="form">State</label>
-                        <select class="form-select" name="state">
-                            <option value="india">Select State</option>
-                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                            <option value="Assam">Assam</option>
-                            <option value="Bihar">Bihar</option>
-                            <option value="Chhattisgarh">Chhattisgarh</option>
-                            <option value="Goa">Goa</option>
-                            <option value="Gujarat">Gujarat</option>
-                            <option value="Haryana">Haryana</option>
-                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                            <option value="Jharkhand">Jharkhand</option>
-                            <option value="Karnataka">Karnataka</option>
-                            <option value="Kerala">Kerala</option>
-                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Manipur">Manipur</option>
-                            <option value="Meghalaya">Meghalaya</option>
-                            <option value="Mizoram">Mizoram</option>
-                            <option value="Nagaland">Nagaland</option>
-                            <option value="Odisha">Odisha</option>
-                            <option value="Punjab">Punjab</option>
-                            <option value="Rajasthan">Rajasthan</option>
-                            <option value="Sikkim">Sikkim</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="Telangana">Telangana</option>
-                            <option value="Tripura">Tripura</option>
-                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                            <option value="Uttarakhand">Uttarakhand</option>
-                            <option value="West Bengal">West Bengal</option>
-                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                            <option value="Chandigarh">Chandigarh</option>
-                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and
-                                Daman
-                                and
-                                Diu
-                            </option>
-                            <option value="Lakshadweep">Lakshadweep</option>
-                            <option value="Delhi">Delhi</option>
-                            <option value="Puducherry">Puducherry</option>
-                        </select>
+                        <label for="form">Tỉnh/Thành phố</label>
+                        <input name="state" type="text" class="form-control" placeholder="Tỉnh/Thành phố" required>
                     </div>
                     <div class="row col-md-6">
-                        <label for="form">Pincode</label>
+                        <label for="form">Mã bưu chính</label>
                         <input name="pincode" type="number" class="form-control" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="row col-md-6 me-3">
-                        <label for="form">Landmark</label>
+                        <label for="form">Điểm mốc</label>
                         <input name="landmark" type="text" class="form-control" required>
                     </div>
                     <div class="row col-md-6">
-                        <label for="form">Alternate Phone</label>
+                        <label for="form">SĐT dự phòng</label>
                         <input name="alternate_phone" type="number" class="form-control">
                         <input name="customer_id" type="hidden" value="{{userData._id}}" class="form-control">
                     </div>
@@ -104,20 +64,20 @@
                         <input class="form-check-input" type="radio" value="HOME" name="address_type"
                             id="flexRadioDefault1" checked>
                         <label class="form-check-label" for="flexRadioDefault1">
-                            HOME
+                            NHÀ
                         </label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" value="WORK" type="radio" name="address_type"
                             id="flexRadioDefault2">
                         <label class="form-check-label" for="flexRadioDefault2">
-                            WORK
+                            CÔNG TY
                         </label>
                     </div>
                 </div>
                 <div class="row mt-2 mb-3 d-flex ">
-                    <input class="btn btn-primary col-md-3 btn-lg" type="submit" />
-                    <input class="ms-2 btn btn-outline col-md-3 btn-lg" type="reset" autocomplete="on" value="Clear" />
+                    <input class="btn btn-primary col-md-3 btn-lg" type="submit" value="Lưu địa chỉ" />
+                    <input class="ms-2 btn btn-outline col-md-3 btn-lg" type="reset" autocomplete="on" value="Xóa" />
 
                     <a id="upButton" class="btn btn-outline col-md-1 ms-3"><i class="fa-solid fa-angle-up"></i></a>
 
@@ -154,20 +114,20 @@
                 <hr>
                 {{/each}}
 
-                <input id="proceedPayment" class="btn btn-outline mb-3" type="button" value="Continue to payment">
+                <input id="proceedPayment" class="btn btn-outline mb-3" type="button" value="Tiếp tục thanh toán">
                 <div class="payment-options">
-                    <div class="h6 mb-2">Payment Options</div>
+                    <div class="h6 mb-2">Phương thức thanh toán</div>
                     <div class="form-check">
                         <input class="form-check-input" value="COD" type="radio" name="payment_method" id="" checked>
                         <label class="form-check-label" for="flexRadioDefault1">
-                            Cash On Delivery
+                            Thanh toán khi nhận hàng
                         </label>
                     </div>
                     {{#if wallet}}
                     <div class="form-check">
                         <input class="form-check-input" value="wallet" type="radio" name="payment_method" id="" checked>
                         <label class="form-check-label" for="flexRadioDefault1">
-                            Times Cart Wallet (₹{{user.user_wallet}})
+                            Ví Times Cart ({{formatVND user.user_wallet}})
                         </label>
                     </div>
                     {{/if}}
@@ -181,46 +141,47 @@
                     <input type="hidden" id="discount" name="discount" value="">
                     <input type="hidden" id="coupen" name="coupen" value="">
                     <input type="hidden" id="coupen_code" name="coupen_code" value="">
-                    <button class="btn btn-primary mb-5" id="submitOrder" style="width:100%;">Place Order</button>
+                    <button class="btn btn-primary mb-5" id="submitOrder" style="width:100%;">Đặt hàng</button>
                 </div>
             </form>
         </div>
     </div>
     <div class="col-md-4 mt-3 ms-3">
         <div role="button" id="checkCoupen" class=" card user-text p-2 bg-light">
-            <h4 class="mt-1"><i class="fa-solid ms-3 fa-tags"></i> Check Coupen?</h4>
+            <h4 class="mt-1"><i class="fa-solid ms-3 fa-tags"></i> Kiểm tra mã giảm giá?</h4>
         </div>
         <div class="card mt-3 mb-4">
             <div class="card-header py-3">
-                <h5 class="mb-0">Summary</h5>
+                <h5 class="mb-0">Tóm tắt</h5>
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                        Products ({{cart.length}})
-                        <span>₹{{totalAmount}}</span>
+                        Sản phẩm ({{cart.length}})
+                        <span>{{formatVND totalAmount}}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        Shipping(free)
-                        <span>₹ 0</span>
+                        Vận chuyển (miễn phí)
+                        <span>{{formatVND 0}}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        Discount:
+                        Giảm giá:
                         <span id="showDiscount">0%</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                         <div>
-                            <strong>Total amount</strong>
+                            <strong>Tổng cộng</strong>
                             <strong>
-                                <p class="mb-0">(including All taxes)</p>
+                                <p class="mb-0">(đã bao gồm thuế)</p>
                             </strong>
                         </div>
-                        <span><strong>₹{{totalAmount}}</strong></span>
+                        <span><strong>{{formatVND totalAmount}}</strong></span>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
+    <div id="coupensBackdrop" class="coupens-backdrop"></div>
     <div class="coupenss bg-light p-3 card">
         <i style="position:absolute; right:12px; top:8px;" id="back" role="button" class="fa-regular fa-circle-xmark mb-2 text-danger"></i>
         {{#each coupens}}
@@ -228,17 +189,17 @@
             <div class="d-flex justify-content-between align-items-center">
                 <input type="button" value="{{this.coupon_code}}" class=" btn btn-sm btn-primary" role="button">
                 <a class="text-decoraton-none fw-bold text-primary" role="button"
-                    onclick="applayCoupen('{{this._id}}')">Apply</a>
+                    onclick="applayCoupen('{{this._id}}')">Áp dụng</a>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-                <p class="text-success fw-bold">Discount: {{this.discount}}% </p>
+                <p class="text-success fw-bold">Giảm giá: {{this.discount}}% </p>
                 <p class="fw-bold text-secondary">EXP: {{this.exp_date}}<br>
-                    <span class="fw-bold text-secondary">Min: ₹{{this.min_amount}}</span>
+                    <span class="fw-bold text-secondary">Tối thiểu: {{formatVND this.min_amount}}</span>
                 </p>
             </div>
             <p class="text-secondary description fw-normal">{{this.discription}} </p>
-            <div role="button" class="text-primary know-more h6">show more</div>
-            <div role="button" class="text-primary know-less h6">show less</div>
+            <div role="button" class="text-primary know-more h6">xem thêm</div>
+            <div role="button" class="text-primary know-less h6">thu gọn</div>
         </div>
         {{/each}}
     </div>
@@ -254,4 +215,26 @@
         width: min(32rem, 95vw);
         box-shadow: 0px 0px 20px #ccc;
     }
+.coupens-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.35);
+    z-index: 3;
+    display: none;
+}
+.coupenss {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    width: min(32rem, 95vw);
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0px 10px 24px rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
 </style>

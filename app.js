@@ -105,6 +105,12 @@ handlebars.registerHelper('lt', function (a, b) { return Number(a) < Number(b); 
 handlebars.registerHelper('eq', function (a, b) { return String(a) === String(b); });
 handlebars.registerHelper('json', function (context) { return JSON.stringify(context); });
 
+// Currency formatting: Vietnamese đồng with thousand separators
+handlebars.registerHelper('formatVND', function (value) {
+  const num = Number(value) || 0;
+  return num.toLocaleString('vi-VN') + ' vnđ';
+});
+
 app.use(session({
   secret: 'secrekeey',
   resave: false,
