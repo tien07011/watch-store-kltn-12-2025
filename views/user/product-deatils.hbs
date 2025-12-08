@@ -9,14 +9,31 @@
     background: #8fd4ff;
     -webkit-border-radius: 1ex;
   }
+  /* Product details refinements */
+  .price-vnd { font-weight: 700; color: #0b5ed7; letter-spacing: .2px; }
+  .details-row dt { color: #666; }
+  .details-row dd { color: #222; }
+  .image-container { background: #f9fbfd; border-color: #e6effa !important; }
+  #primary-img-view { transition: transform .25s ease; }
+  .thumb { transition: transform .15s ease, box-shadow .15s ease; }
+  .thumb:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .border-primary { border-color: #0b5ed7 !important; }
+  .action-buttons .btn { min-width: 140px; }
+
+  /* Reviews section polish */
+  .reviews { border: 1px solid #eef2f7; border-radius: .75rem; background: #fff; }
+  .review-card { border: 1px solid #f1f3f7; border-radius: .75rem; background: #fff; }
+  .review-user { font-weight: 600; margin-right: .75rem; color: #0f172a; }
+  .review-rating { display: inline-flex; align-items: center; gap: .25rem; color: #f59e0b; font-weight: 600; }
+  .review-comment { margin-top: .25rem; color: #334155; }
+  .card-pad { padding: .75rem 1rem; }
 </style>
 <!-- content -->
 <section class="py-5">
   <div class="container">
     <div class="row gx-5">
       <aside class="col-lg-6">
-        <div id="image-container" role="button"
-          class="border image-container rounded-4 mb-3 d-flex justify-content-center">
+        <div id="image-container" class="border image-container rounded-4 mb-3 d-flex justify-content-center">
           {{#if product.wish}}
           <i id="heart{{product._id}}" class="fa-regular add-to-wish-list-btn fa-2x fa-heart"
             onclick="addToWishlist('{{product._id}}')" role="button"></i>
@@ -24,13 +41,17 @@
           <i id="heart{{product._id}}" class="fa-solid text-danger add-to-wish-list-btn fa-2x fa-heart"
             onclick="addToWishlist('{{product._id}}')" role="button"></i>
           {{/if}}
-          <img id="primary-img-view" class="rounded-4 fit primaryIMG"
+          <img id="primary-img-view" class="rounded-4 fit primaryIMG" style="max-width:100%; object-fit:contain;"
             src="/productImages/{{product.primary_image.name}}" />
         </div>
         <div class="d-flex justify-content-center mb-3">
+          <!-- Preview thumbnails: include primary + all secondary images -->
+          <img width="60" height="60" role="button" id="thumb_primary" onclick="changeImage('primary')"
+            class="border m-1 rounded-2 border-primary thumb" src="/productImages/{{product.primary_image.name}}" />
           {{#each product.secondary_images}}
-          <img width="60" height="60" role="button" id="secondary_img{{this._id}}" onclick="changeImage('{{this._id}}')"
-            class="border m-1 rounded-2" src="/productImages/{{this.name}}" />{{/each}}
+          <img width="60" height="60" role="button" id="thumb_{{this._id}}" onclick="changeImage('{{this._id}}')"
+            class="border m-1 rounded-2 thumb" src="/productImages/{{this.name}}" />
+          {{/each}}
         </div>
       </aside>
       <main class="col-lg-6">
@@ -40,43 +61,73 @@
           </h4>
           <div class="d-flex flex-row my-3">
 
-            <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i> Only {{product.stock}}
-              left</span>
-            <span class="text-success ms-2">In stock</span>
+            <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i> Còn lại {{product.stock}}</span>
+            <span class="text-success ms-2">Còn hàng</span>
           </div>
-          <span class="h5 text-second">₹{{product.selling_price}}</span>
+          <span class="h5 text-second price-vnd" id="detail-price">{{product.selling_price}}₫</span>
           <p>
             {{product.description}}
           </p>
-          <div class="row">
-            <dt class="col-3">Color</dt>
-            <dd class="col-9">{{product.color}}</dd>
+          <div class="row details-row">
+            <dt class="col-3">Màu sắc</dt>
+            <dd class="col-9" style="text-transform:capitalize;">{{product.color}}</dd>
 
-            <dt class="col-3">Brand</dt>
+            <dt class="col-3">Thương hiệu</dt>
             <dd class="col-9">{{product.brand_name}}</dd>
           </div>
           <hr />
 
-          <a onclick="addToCart('{{product._id}}')" class="btn btn-primary"> Buy now </a>
-          <a onclick="addToCart('{{product._id}}')" class="btn btn-outline"> <i
-              class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
-          <a onclick="addToWishlist('{{product._id}}')" class="btn btn-outline">
-            <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+            <div class="action-buttons d-flex gap-2">
+            <a onclick="buyNow('{{product._id}}')" class="btn btn-primary"> Mua ngay </a>
+            <a onclick="addToCart('{{product._id}}')" class="btn btn-outline"> <i
+              class="me-1 fa fa-shopping-basket"></i> Thêm vào giỏ </a>
+            </div>
+          
         </div>
         <div class="col-lg-12 d-flex justify-content-between align-items-center card card-pad mt-3">
-          <h6 class="mt-1">Reviews & rating</h6>
+          <h6 class="mt-1">Đánh giá & xếp hạng</h6>
           <i role="button" class="fa-solid reviewDown fa-caret-down"></i>
           <i role="button" class="fa-solid reviewup fa-caret-up"></i>
         </div>
-        <div class="reviews p-2 card mt-2" style="max-height:150px;overflow-y:auto">
-          {{#each ratings}}
-          <div class="card px-2 py-1 mt-2 ">
-            <div class="card-title d-flex align-items-center  ">
-              <p class="h5 me-3 ">{{this.user.user_name}}</p>
-              <div class="h5 mt-1 me-2">{{this.rating}}</div>
-              <i class="fa-solid fa-sm text-warning fa-star"></i>
+        {{#if user}}
+        <form id="rating-form" class="card card-pad mt-2" action="/review/submit" method="POST">
+          <input type="hidden" name="product_id" value="{{product._id}}" />
+          <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+              <label for="rating" class="form-label">Chọn số sao</label>
+              <select id="rating" name="rating" class="form-select">
+                <option value="5">5 sao</option>
+                <option value="4">4 sao</option>
+                <option value="3">3 sao</option>
+                <option value="2">2 sao</option>
+                <option value="1">1 sao</option>
+              </select>
             </div>
-            <p style="margin-top:-20px;">{{this.comment}}</p>
+            <div class="col-12 col-md-8">
+              <label for="comment" class="form-label">Nhận xét của bạn</label>
+              <textarea id="comment" name="comment" class="form-control" rows="2" placeholder="Viết vài dòng cảm nhận..."></textarea>
+            </div>
+          </div>
+          <div class="mt-2 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+          </div>
+        </form>
+        {{else}}
+        <div class="card card-pad mt-2">
+          <span class="muted">Đăng nhập để đánh giá sản phẩm.</span>
+          <a href="/login" class="btn btn-outline mt-2">Đăng nhập</a>
+        </div>
+        {{/if}}
+        <div class="reviews p-2 card mt-2" style="max-height:220px;overflow-y:auto">
+          {{#each ratings}}
+          <div class="card px-3 py-2 mt-2 review-card">
+            <div class="card-title d-flex align-items-center">
+              <span class="review-user">{{this.user.user_name}}</span>
+              <span class="review-rating">
+                {{this.rating}} <i class="fa-solid fa-star"></i>
+              </span>
+            </div>
+            <p class="review-comment">{{this.comment}}</p>
           </div>
           {{/each}}
         </div>
@@ -90,29 +141,41 @@
   $(document).ready(() => {
 
 
-    let zoom_area = document.getElementById('image-container')
-    let zoom_img = document.getElementById('primary-img-view');
+    const zoom_area = document.getElementById('image-container');
+    const zoom_img = document.getElementById('primary-img-view');
     zoom_area.addEventListener('mousemove', (event) => {
-      clientX = event.clientX - zoom_area.offsetLeft
-      clientY = event.clientY - zoom_area.offsetTop
-      mWidth = zoom_area.offsetWidth
-      mHeight = zoom_area.offsetHeight
-      clientX = clientX / mWidth * 100
-      clientY = clientY / mHeight * 100
-      zoom_img.style.transform = 'translate(-' + clientX + '%,-' + clientY + '%) scale(2)'
-    })
+      let clientX = event.clientX - zoom_area.offsetLeft;
+      let clientY = event.clientY - zoom_area.offsetTop;
+      const mWidth = zoom_area.offsetWidth;
+      const mHeight = zoom_area.offsetHeight;
+      clientX = clientX / mWidth * 100;
+      clientY = clientY / mHeight * 100;
+      zoom_img.style.transform = 'translate(-' + clientX + '%,-' + clientY + '%) scale(1.3)';
+    });
     zoom_area.addEventListener('mouseleave', () => {
-      zoom_img.style.transform = 'translate(-50%,-50%) scale(1)'
+      zoom_img.style.transform = 'translate(-50%,-50%) scale(1)';
     });
 
 
-    //change image function
-    changeImage = (img) => {
-      let secondary_image = document.getElementById(`secondary_img${img}`);
-      let temp = secondary_image.src;
-      secondary_image.src = zoom_img.src;
-      zoom_img.src = temp
-
+    //change image function: set primary view to clicked thumbnail
+    changeImage = (imgId) => {
+      let src = '';
+      if (imgId === 'primary') {
+        src = document.getElementById('thumb_primary')?.src || '';
+      } else {
+        const thumb = document.getElementById(`thumb_${imgId}`);
+        if (!thumb) return;
+        src = thumb.src;
+      }
+      if (src) {
+        zoom_img.src = src;
+      }
+      // active state border
+      document.querySelectorAll('#thumb_primary, [id^="thumb_"]').forEach(el=>{
+        el.classList.remove('border-primary');
+      });
+      const activeEl = imgId === 'primary' ? document.getElementById('thumb_primary') : document.getElementById(`thumb_${imgId}`);
+      activeEl?.classList.add('border-primary');
     }
 
     $('.reviewup').hide();
@@ -133,4 +196,47 @@
 
 
   });
+
+  // Buy now: add to cart then go to checkout
+  function buyNow(pid){
+    try {
+      if (typeof addToCart === 'function') {
+        addToCart(pid);
+      }
+      window.location.href = '/cart/checkout';
+    } catch (e) {
+      window.location.href = '/cart/checkout';
+    }
+  }
+
+  // Price formatter for VND with dots and 'đ'
+  (function(){
+    function formatVND(value){
+      const n = Number(String(value).replace(/[^0-9]/g, ''));
+      if (!Number.isFinite(n)) return value;
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+    }
+    const el = document.getElementById('detail-price');
+    if (el) el.textContent = formatVND(el.textContent);
+  })();
+
+  // Client-side validation before submit rating
+  (function(){
+    const form = document.getElementById('rating-form');
+    if (!form) return;
+    form.addEventListener('submit', function(e){
+      const rating = Number(document.getElementById('rating')?.value || 0);
+      const comment = (document.getElementById('comment')?.value || '').trim();
+      if (!(rating >= 1 && rating <= 5)){
+        e.preventDefault();
+        alert('Vui lòng chọn số sao từ 1 đến 5');
+        return;
+      }
+      if (comment.length < 5){
+        e.preventDefault();
+        alert('Nhận xét quá ngắn, vui lòng viết ít nhất 5 ký tự');
+        return;
+      }
+    });
+  })();
 </script>
