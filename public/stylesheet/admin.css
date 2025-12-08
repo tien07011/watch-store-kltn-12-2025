@@ -17,10 +17,10 @@
 /* Global */
 body { background: var(--background); color: var(--textcolor); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
 
-/* Make admin layout full-width, no side padding */
-.container.section { max-width: 100% !important; width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; }
-.section main.card { padding: 0 !important; }
-.category, .object-fit-contain { width: 100% !important; }
+/* Make admin layout full-width, no side padding (admin only) */
+.admin-shell { max-width: 100% !important; width: 100% !important; padding-left: 0 !important; padding-right: 0 !important; }
+.admin-shell main.card { padding: 0 !important; }
+.admin-shell .category, .admin-shell .object-fit-contain { width: 100% !important; }
 
 .header { background: linear-gradient(90deg, #e8eefc, #f3f6fb); border: 1px solid var(--border); border-radius: var(--radius-md); padding: .75rem 1rem; box-shadow: var(--shadow-sm); }
 .h3.text-second { color: var(--textcolor); }

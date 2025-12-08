@@ -82,7 +82,7 @@
   {{#if fullscreen}}
   {{{body}}}
   {{else}}
-  <div class="container section justify-content-between d-flex" style="gap: 1rem; align-items: flex-start;">
+  <div class="container section justify-content-between d-flex {{#if Admin}}admin-shell{{/if}}" style="gap: 1rem; align-items: flex-start;">
     {{#if Admin}}
     {{>admin-sidebar}}
     {{/if}}
