@@ -17,29 +17,22 @@ const render_home = async (req, res) => {
         cartCount = userData.cart.length
     }
     let banners = await Banner.find({ banner_status: true });
-    banners[0] = {
-        new: "active",
-        image: {
-            filename: banners[0].image.filename
-        },
-        reference: banners[0].reference
+    if (banners && banners[0]) {
+        banners[0] = {
+            new: "active",
+            image: {
+                filename: banners[0].image.filename
+            },
+            reference: banners[0].reference
+        }
     }
 
-    let product;
-    if (req.query.page) {
-        let page = parseInt(req.query.page);
-        let skip = (page - 1) * 6;
-        product = products.slice(skip, skip + 6);
-    } else {
-        product = products.slice(0, 6);
-    }
+    // Prepare sections: general, men, women (limit 4 each)
+    const product = products.slice(0, 4);
+    const menProducts = products.slice(0, 4);
+    const womenProducts = products.slice(4, 8);
 
-    let arr = [];
-    for (let i = 1; i < products.length / 6 + 1; i++) {
-        arr.push(i)
-    }
-    let last = arr[arr.length - 1]
-    res.render('user/home', { user: true, last, userData, arr, banners, cartCount, product, footer: true });
+    res.render('user/home', { user: true, userData, banners, cartCount, product, menProducts, womenProducts, footer: true });
     delete req.session.order;
 }
 

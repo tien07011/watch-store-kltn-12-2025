@@ -1,17 +1,18 @@
 <div class="container-fluid">
   <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-    <ol class="carousel-indicators">
+    {{!-- Hidden indicators --}}
+    {{!-- <ol class="carousel-indicators">
       {{#each banners}}
       <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{@index}}" class="{{this.new}}"></li>
       {{/each}}
-    </ol>
+    </ol> --}}
     <div class="carousel-inner">
       {{#each banners}}
       <div class="carousel-item {{this.new}}">
         <img class="d-block w-100" src="/banners/{{this.image.filename}}" alt="First slide">
         <div class="carousel-caption d-none d-md-block">
-          <input type="button" onclick="window.open('{{this.reference}}','_blank')" class="btn btn-primary"
-            value="Know more..">
+          {{!-- <input type="button" onclick="window.open('{{this.reference}}','_blank')" class="btn btn-primary"
+            value="Know more.."> --}}
         </div>
       </div>
       {{/each}}
@@ -56,28 +57,77 @@
     {{/each}}
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-center">
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-            <span class="visually-hidden">Previous</span>
-          </a>
-        </li>
-        {{#each arr}}
-        <li class="page-item"><a id="href" class="page-link" href="/?page={{this}}">{{this}}</a></li>
-        {{/each}}
-        <li class="page-item">
-          <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-            <input id="last" type="hidden" value="{{last}}">
-            <span class="visually-hidden">Next</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+  <!-- Xem thêm general -->
+  <div class="d-flex justify-content-center my-3">
+    <a href="/" class="btn btn-outline-primary">Xem thêm</a>
+  </div>
+
+  <hr>
+  <div class="h3 text-center fw-bold">Đồng hồ nam</div>
+  <hr>
+
+  <div class="row g-3 g-md-4">
+    {{#each menProducts}}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card product-card h-100 border-0 shadow-sm">
+        <div class="ratio ratio-4x3">
+          <img class="card-img-top" src="/productImages/{{this.primary_image.name}}" alt="{{this.product_name}}">
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title text-truncate">{{this.product_name}}</h5>
+          <p class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-secondary small text-capitalize">{{this.color}}</span>
+            <span class="price price-primary"><span class="price-value">{{this.selling_price}}</span><span class="price-currency">VNĐ</span></span>
+          </p>
+          <p class="small text-secondary mb-3">
+            <span class="price price-strike"><span class="price-value">{{this.actual_price}}</span><span class="price-currency">VNĐ</span></span>
+          </p>
+          <div class="mt-auto d-flex gap-2">
+            <a href="/view_product/{{this._id}}" class="btn btn-primary w-50">Mua ngay</a>
+            <button type="button" onclick="addToCart('{{this._id}}')" class="btn btn-outline-dark w-50">Thêm giỏ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="d-flex justify-content-center my-3">
+    <a href="/products?gender=male" class="btn btn-outline-primary">Xem thêm</a>
+  </div>
+
+  <hr>
+  <div class="h3 text-center fw-bold">Đồng hồ nữ</div>
+  <hr>
+
+  <div class="row g-3 g-md-4">
+    {{#each womenProducts}}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card product-card h-100 border-0 shadow-sm">
+        <div class="ratio ratio-4x3">
+          <img class="card-img-top" src="/productImages/{{this.primary_image.name}}" alt="{{this.product_name}}">
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title text-truncate">{{this.product_name}}</h5>
+          <p class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-secondary small text-capitalize">{{this.color}}</span>
+            <span class="price price-primary"><span class="price-value">{{this.selling_price}}</span><span class="price-currency">VNĐ</span></span>
+          </p>
+          <p class="small text-secondary mb-3">
+            <span class="price price-strike"><span class="price-value">{{this.actual_price}}</span><span class="price-currency">VNĐ</span></span>
+          </p>
+          <div class="mt-auto d-flex gap-2">
+            <a href="/view_product/{{this._id}}" class="btn btn-primary w-50">Mua ngay</a>
+            <button type="button" onclick="addToCart('{{this._id}}')" class="btn btn-outline-dark w-50">Thêm giỏ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="d-flex justify-content-center my-3">
+    <a href="/products?gender=female" class="btn btn-outline-primary">Xem thêm</a>
   </div>
 </div>
 
@@ -85,7 +135,6 @@
 <script>
 
 
-  // Add event listeners for "Next" and "Previous" buttons
   document.addEventListener('DOMContentLoaded', function () {
     // Format prices with Vietnamese thousand separators
     try {
@@ -98,31 +147,6 @@
         }
       });
     } catch (e) { /* noop */ }
-
-    const nextPageButton = document.querySelector('a[aria-label="Next"]');
-    const prevPageButton = document.querySelector('a[aria-label="Previous"]');
-    let last = document.getElementById('last').value;
-    last = parseInt(last);
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const qParamValue = urlSearchParams.get('page');
-    let page = parseInt(qParamValue);
-    if (page) {
-      nextPageButton.addEventListener('click', function (event) {
-        if (page >= 1 && page < last) {
-          page = page + 1;
-        }
-        location.assign(`/?page=${page}`);
-      });
-
-      prevPageButton.addEventListener('click', function (event) {
-        if (page > 1 && page <= last) {
-          page = page - 1;
-        }
-        location.assign(`/?page=${page}`);
-      });
-    } else {
-      location.assign(`/?page=1`);
-    }
   });
 
 </script>
