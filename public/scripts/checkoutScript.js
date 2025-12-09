@@ -41,7 +41,7 @@ $(document).ready(() => {
     const proceedPayment = document.getElementById('proceedPayment');
     if (proceedPayment) {
         proceedPayment.addEventListener('click', (e) => {
-            e.preventDefault;
+            e.preventDefault();
             $('#proceedPayment').hide();
             $('.payment-options').slideDown();
         })

@@ -476,9 +476,17 @@ const verifyPaymenet = async (req, res) => {
 const momoReturn = async (req, res) => {
     try {
         const { resultCode, orderId } = req.query;
-        if (String(resultCode) === '0' && orderId) {
-            req.session.order = { status: true };
-            return res.redirect('/cart/order-success');
+        // Always check DB status; IPN is the source of truth
+        if (orderId) {
+            const order = await Order.findById(orderId).lean();
+            if (order && String(order.status) === 'confirmed') {
+                req.session.order = { status: true };
+                return res.redirect('/cart/order-success');
+            }
+            // If not yet confirmed, show a pending page or redirect to orders
+            // You may create a dedicated pending view; for now redirect to cart with a flash message
+            req.flash('info', 'Thanh toán đang xử lý, vui lòng chờ trong giây lát.');
+            return res.redirect('/');
         }
         return res.redirect('/');
     } catch {
