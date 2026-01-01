@@ -1,65 +1,89 @@
 <nav id="navbar" class="user-nav">
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <span class="topbar-text">Sắm Tết cùng Neos — Ưu đãi cực sốc!</span>
+    </div>
+  </div>
   <div class="container nav-inner">
-    <a class="brand" href="/" class="block">
-      <img src="/images/logo.svg" alt="Times Cart" style="width:7rem; height:auto;" />
-    </a>
+    <div class="nav-left">
+      <button id="menuToggle" class="icon-btn menu-toggle" aria-label="Mở menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a class="brand" href="/">
+        <img src="/images/logo.png" alt="Times Cart" style="width:7rem; height:auto;" />
+      </a>
+    </div>
 
     {{#if checkout}}
-    {{!-- Hide nav actions on checkout if needed --}}
+      {{!-- Hide nav center/actions on checkout if needed --}}
     {{else}}
-    <div class="nav-links">
-      <a href="/products">Tất cả sản phẩm</a>
-      <a href="/products/?&category=Đồng+hồ+nam">Đồng hồ nam</a>
-      <a href="/products/?&category=Đồng+hồ+nữ">Đồng hồ nữ</a>
-      <a href="/news">Tin tức</a>
-    </div>
+      <div class="nav-center">
+        <div class="nav-links">
+          <a href="/products">Tất cả sản phẩm</a>
+          <a href="/products/?&category=Đồng+hồ+nam">Đồng hồ nam</a>
+          <a href="/products/?&category=Đồng+hồ+nữ">Đồng hồ nữ</a>
+          <a href="/news">Tin tức</a>
+        </div>
 
-    <form class="search d-flex align-items-center" action="/products" method="get" style="gap:.5rem;">
-      <a id="querry" href="/products/?search="><i onclick="searchProduct()" class="fa-brands fa-searchengin"></i></a>
-      <input id="searchInput" name="search" class="search-box" type="search" placeholder="Tìm kiếm" aria-label="Tìm kiếm" />
-    </form>
+        <form class="search" action="/products" method="get" role="search">
+          <div class="search-field">
+            <input id="searchInput" name="search" class="search-box" type="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Tìm kiếm sản phẩm" />
+            <button type="submit" class="search-btn" aria-label="Tìm kiếm">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </div>
+        </form>
+      </div>
 
-    <div class="nav-actions" style="font-size:1.25rem;">
-      <a class="icon-btn" href="/my-account/wishlist" aria-label="Wishlist"><i class="fa-solid fa-heart"></i></a>
-      <a class="icon-btn position-relative" href="/cart" aria-label="Giỏ hàng">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span id="cartCount" class="position-absolute translate-middle badge rounded-pill bg-success" style="top:6px; right:4px;">{{cartCount}}</span>
-      </a>
-      <button id="btnn" type="button" class="icon-btn" aria-label="Account"><i class="fa-solid fa-user"></i></button>
+      <div class="nav-actions">
+        <a class="icon-btn" href="/my-account/wishlist" aria-label="Wishlist"><i class="fa-solid fa-heart"></i></a>
+        <a class="icon-btn position-relative" href="/cart" aria-label="Giỏ hàng">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span id="cartCount" class="position-absolute translate-middle badge rounded-pill bg-success" style="top:6px; right:4px;">{{cartCount}}</span>
+        </a>
+        <button id="btnn" type="button" class="icon-btn" aria-label="Tài khoản"><i class="fa-solid fa-user"></i></button>
 
-      <div id="prof-div" style="display:none; position:relative;">
-        <div class="dropdown-panel">
-          <div class="dropdown-title">Tài khoản</div>
-          <div class="d-flex flex-column mt-2">
-            <a class="blue-secondary px-2 py-2" href="/my-account"><i class="fa-solid fa-user me-2"></i>Tài khoản</a>
-            <a class="blue-secondary px-2 py-2" href="/cart"><i class="fa-solid fa-cart-shopping me-2"></i>Giỏ hàng của tôi</a>
-            <a class="blue-secondary px-2 py-2" href="/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Lịch sử đơn hàng</a>
-            <a class="blue-secondary px-2 py-2" href="/my-account/wishlist"><i class="fa-solid fa-heart me-2"></i>Danh sách yêu thích</a>
+        <div id="prof-div" style="display:none;">
+          <div class="dropdown-panel">
+            <div class="dropdown-title">Tài khoản</div>
+            <div class="d-flex flex-column mt-2">
+              <a class="blue-secondary px-2 py-2" href="/my-account"><i class="fa-solid fa-user me-2"></i>Tài khoản</a>
+              <a class="blue-secondary px-2 py-2" href="/cart"><i class="fa-solid fa-cart-shopping me-2"></i>Giỏ hàng của tôi</a>
+              <a class="blue-secondary px-2 py-2" href="/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Lịch sử đơn hàng</a>
+              <a class="blue-secondary px-2 py-2" href="/my-account/wishlist"><i class="fa-solid fa-heart me-2"></i>Danh sách yêu thích</a>
+            </div>
+            {{#if userData}}
+            <div class="account d-flex justify-content-center align-items-center mt-2">
+              <a class="px-4 py-1" href="/logout">Đăng xuất</a>
+            </div>
+            {{else}}
+            <div class="account d-flex justify-content-center align-items-center mt-2">
+              <a class="px-4 py-1" href="/login">Đăng nhập/Đăng ký</a>
+            </div>
+            {{/if}}
           </div>
-          {{#if userData}}
-          <div class="account d-flex justify-content-center align-items-center mt-2">
-            <a class="px-4 py-1" href="/logout">Đăng xuất</a>
-          </div>
-          {{else}}
-          <div class="account d-flex justify-content-center align-items-center mt-2">
-            <a class="px-4 py-1" href="/login">Đăng nhập/Đăng ký</a>
-          </div>
-          {{/if}}
         </div>
       </div>
-    </div>
     {{/if}}
   </div>
 </nav>
 
 <script>
   $(document).ready(function () {
-    const $menuBtn = $("#btnn");
+    const $profileBtn = $("#btnn");
     const $panel = $("#prof-div");
-    $menuBtn.on('click', function (e) {
+    const $navbar = $("#navbar");
+    const $menuToggle = $("#menuToggle");
+
+    $profileBtn.on('click', function (e) {
       e.stopPropagation();
       $panel.toggle();
     });
     $(document).on('click', function () { $panel.hide(); });
+
+    $menuToggle.on('click', function (e) {
+      e.stopPropagation();
+      $navbar.toggleClass('open');
+    });
   });
 </script>
