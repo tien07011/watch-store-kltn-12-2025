@@ -1,160 +1,146 @@
-<div class="outer-container container-fluid" style="position:relative;">
-    <div class="container mt-3">
+<div class="checkout">
+    <div class="stack-lg" style="align-items:flex-start;">
+        <div style="flex:2; min-width:0;">
+            <div class="stack-md" style="align-items:center; justify-content:space-between;">
+                <h2>Thanh toán</h2>
+                <input id="addAddress" class="btn btn-outline" type="button" value="Thêm địa chỉ">
+            </div>
 
-        <div class="header d-flex align-items-center justify-content-between">
-            <h3 class="h4 fw-bold mb-3">Thanh toán</h3>
-            <input id="addAddress" class="btn btn-outline" type="button" value="Thêm địa chỉ">
-        </div>
-        <div class="header d-flex flex-column align-items-center justify-content-between">
-            {{!-- add address --}}
-            <form action="/my-account/checkout/new-address" method="post" class=" add-form container">
-                <div class="row">
-                    <div class="row col-md-6 me-3">
-                        <label for="form">Họ và tên</label>
-                        <input name="address_cust_name" type="text" class="form-control" required>
+            {{!-- Add new address form (collapsible) --}}
+            <form action="/my-account/checkout/new-address" method="post" class="add-form card card-pad" style="margin-top:.75rem;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Họ và tên</label>
+                        <input name="address_cust_name" type="text" class="input" required>
                     </div>
-                    <div class="row col-md-6">
-                        <label for="form">Số điện thoại</label>
-                        <input name="phone" type="text" class="form-control" required>
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại</label>
+                        <input name="phone" type="text" class="input" required>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="row col-md-6 me-3">
-                        <label for="form">Tên nhà/Địa chỉ</label>
-                        <input name="house_name" type="text" class="form-control" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tên nhà/Địa chỉ</label>
+                        <input name="house_name" type="text" class="input" required>
                     </div>
-                    <div class="row col-md-6">
-                        <label for="form">Phố/Đường</label>
-                        <input name="area_street" type="text" class="form-control" required>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row col-md-6 me-3">
-                        <label for="form">Phường/Xã</label>
-                        <input name="locality" type="text" class="form-control" required>
-                    </div>
-                    <div class="row col-md-6">
-                        <label for="form">Quận/Huyện</label>
-                        <input name="town" type="text" class="form-control" required>
+                    <div class="form-group">
+                        <label class="form-label">Phố/Đường</label>
+                        <input name="area_street" type="text" class="input" required>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="row col-md-6 me-3">
-                        <label for="form">Tỉnh/Thành phố</label>
-                        <input name="state" type="text" class="form-control" placeholder="Tỉnh/Thành phố" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Phường/Xã</label>
+                        <input name="locality" type="text" class="input" required>
                     </div>
-                    <div class="row col-md-6">
-                        <label for="form">Mã bưu chính</label>
-                        <input name="pincode" type="number" class="form-control" required>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="row col-md-6 me-3">
-                        <label for="form">Điểm mốc</label>
-                        <input name="landmark" type="text" class="form-control" required>
-                    </div>
-                    <div class="row col-md-6">
-                        <label for="form">SĐT dự phòng</label>
-                        <input name="alternate_phone" type="number" class="form-control">
-                        <input name="customer_id" type="hidden" value="{{userData._id}}" class="form-control">
+                    <div class="form-group">
+                        <label class="form-label">Quận/Huyện</label>
+                        <input name="town" type="text" class="input" required>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" value="HOME" name="address_type"
-                            id="flexRadioDefault1" checked>
-                        <label class="form-check-label" for="flexRadioDefault1">
-                            NHÀ
-                        </label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tỉnh/Thành phố</label>
+                        <input name="state" type="text" class="input" placeholder="Tỉnh/Thành phố" required>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" value="WORK" type="radio" name="address_type"
-                            id="flexRadioDefault2">
-                        <label class="form-check-label" for="flexRadioDefault2">
-                            CÔNG TY
-                        </label>
+                    <div class="form-group">
+                        <label class="form-label">Mã bưu chính</label>
+                        <input name="pincode" type="number" class="input" required>
                     </div>
                 </div>
-                <div class="row mt-2 mb-3 d-flex ">
-                    <input class="btn btn-primary col-md-3 btn-lg" type="submit" value="Lưu địa chỉ" />
-                    <input class="ms-2 btn btn-outline col-md-3 btn-lg" type="reset" autocomplete="on" value="Xóa" />
-
-                    <a id="upButton" class="btn btn-outline col-md-1 ms-3"><i class="fa-solid fa-angle-up"></i></a>
-
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Điểm mốc</label>
+                        <input name="landmark" type="text" class="input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SĐT dự phòng</label>
+                        <input name="alternate_phone" type="number" class="input">
+                        <input name="customer_id" type="hidden" value="{{userData._id}}" class="input">
+                    </div>
+                </div>
+                <div class="stack-md">
+                    <div class="stack-md">
+                        <label class="form-label">Loại địa chỉ</label>
+                        <div class="stack-md">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" value="HOME" name="address_type" id="addrHome" checked>
+                                <label class="form-check-label" for="addrHome">NHÀ</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" value="WORK" type="radio" name="address_type" id="addrWork">
+                                <label class="form-check-label" for="addrWork">CÔNG TY</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stack-md" style="align-items:center;">
+                        <input class="btn btn-primary" type="submit" value="Lưu địa chỉ" />
+                        <input class="btn btn-outline" type="reset" autocomplete="on" value="Xóa" />
+                        <a id="upButton" class="btn btn-outline" title="Thu gọn"><i class="fa-solid fa-angle-up"></i></a>
+                    </div>
                 </div>
             </form>
 
-            <form id="orderForm">
-
+            {{!-- Address selection + Payment --}}
+            <form id="orderForm" class="card card-pad" style="margin-top:1rem;">
                 {{#each address}}
-                <div class="address-container d-flex align-items-center">
-                    <div class="form-check me-3">
-                        <input id="addressInput" class="form-check-input" type="radio" name="address"
-                            value="{{this._id}}" name="flexRadioDefault" required>
+                <div class="address-container" style="display:flex; gap:.75rem; align-items:flex-start;">
+                    <div class="form-check" style="margin-top:.35rem;">
+                        <input id="addressInput" class="form-check-input" type="radio" name="address" value="{{this._id}}" required>
                     </div>
-                    <div class="row card pt-3 mt-2 col-md-12">
-                        <div class="headercont d-flex justify-content-between">
-                            <div style="width: 5rem;" class="btn btn-sm btn-light">
-                                {{this.address_type}}
-                            </div>
+                    <div class="card card-pad" style="flex:1;">
+                        <div class="stack-md" style="justify-content:space-between; align-items:center;">
+                            <span class="badge badge-info" style="width:auto;">{{this.address_type}}</span>
                         </div>
-                        <p class="h5">{{this.address_cust_name}} &emsp; {{this.phone }}</p>
-                        <p class="text-normal">
-                            {{this.house_name}}(H),
-                            {{this.locality}},
-                            {{this.area_street}},
-                            {{this.landmark}},
-                            {{this.state}}
-                            <span class="fw-bold">
-                                -{{this.pincode}}
-                            </span>
+                        <p class="lead">{{this.address_cust_name}} &emsp; {{this.phone}}</p>
+                        <p class="muted">
+                            {{this.house_name}} (H), {{this.locality}}, {{this.area_street}}, {{this.landmark}}, {{this.state}}
+                            <span class="fw-bold">-{{this.pincode}}</span>
                         </p>
                     </div>
                 </div>
                 <hr>
                 {{/each}}
 
-                <input id="proceedPayment" class="btn btn-outline mb-3" type="button" value="Tiếp tục thanh toán">
-                <div class="payment-options">
+                <input id="proceedPayment" class="btn btn-outline" type="button" value="Tiếp tục thanh toán">
+
+                <div class="payment-options card card-pad" style="margin-top:.75rem;">
                     <div class="h6 mb-2">Phương thức thanh toán</div>
                     <div class="form-check">
-                        <input class="form-check-input" value="COD" type="radio" name="payment_method" id="" checked>
-                        <label class="form-check-label" for="flexRadioDefault1">
-                            Thanh toán khi nhận hàng
-                        </label>
+                        <input class="form-check-input" value="COD" type="radio" name="payment_method" id="payCOD" checked>
+                        <label class="form-check-label" for="payCOD">Thanh toán khi nhận hàng</label>
                     </div>
                     {{#if wallet}}
                     <div class="form-check">
-                        <input class="form-check-input" value="wallet" type="radio" name="payment_method" id="" checked>
-                        <label class="form-check-label" for="flexRadioDefault1">
-                            Ví Times Cart ({{formatVND user.user_wallet}})
-                        </label>
+                        <input class="form-check-input" value="wallet" type="radio" name="payment_method" id="payWallet">
+                        <label class="form-check-label" for="payWallet">Ví Times Cart ({{formatVND user.user_wallet}})</label>
                     </div>
                     {{/if}}
                     <div class="form-check mb-3">
-                        <input class="form-check-input" value="Online Payment" type="radio" name="payment_method" id="">
-                        <label class="form-check-label" for="flexRadioDefault2">
-                            MoMo (Ví điện tử)
-                        </label>
+                        <input class="form-check-input" value="Online Payment" type="radio" name="payment_method" id="payOnline">
+                        <label class="form-check-label" for="payOnline">MoMo (Ví điện tử)</label>
                     </div>
+
                     <input type="hidden" id="price" name="price" value="{{totalAmount}}">
                     <input type="hidden" id="discount" name="discount" value="">
                     <input type="hidden" id="coupen" name="coupen" value="">
                     <input type="hidden" id="coupen_code" name="coupen_code" value="">
-                    <button class="btn btn-primary mb-5" id="submitOrder" style="width:100%;">Đặt hàng</button>
+
+                    <button class="btn btn-primary" id="submitOrder" style="width:100%;">Đặt hàng</button>
                 </div>
             </form>
         </div>
-    </div>
-    <div class="col-md-4 mt-3 ms-3">
-        <div role="button" id="checkCoupen" class=" card user-text p-2 bg-light">
-            <h4 class="mt-1"><i class="fa-solid ms-3 fa-tags"></i> Kiểm tra mã giảm giá?</h4>
-        </div>
-        <div class="card mt-3 mb-4">
-            <div class="card-header py-3">
-                <h5 class="mb-0">Tóm tắt</h5>
+
+        <div style="flex:1; min-width:280px;">
+            <div role="button" id="checkCoupen" class="card card-pad" style="cursor:pointer;">
+                <div class="stack-md" style="align-items:center;">
+                    <i class="fa-solid fa-tags"></i>
+                    <h4 class="mt-1">Kiểm tra mã giảm giá?</h4>
+                </div>
             </div>
-            <div class="card-body">
+
+            <div class="card card-pad mt-3">
+                <h5 class="mb-2">Tóm tắt</h5>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                         Sản phẩm ({{cart.length}})
@@ -171,9 +157,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                         <div>
                             <strong>Tổng cộng</strong>
-                            <strong>
-                                <p class="mb-0">(đã bao gồm thuế)</p>
-                            </strong>
+                            <p class="mb-0 muted">(đã bao gồm thuế)</p>
                         </div>
                         <span><strong>{{formatVND totalAmount}}</strong></span>
                     </li>
@@ -181,60 +165,28 @@
             </div>
         </div>
     </div>
-    <div id="coupensBackdrop" class="coupens-backdrop"></div>
-    <div class="coupenss bg-light p-3 card">
-        <i style="position:absolute; right:12px; top:8px;" id="back" role="button" class="fa-regular fa-circle-xmark mb-2 text-danger"></i>
+
+    {{!-- Coupon modal --}}
+    <div id="coupensBackdrop" class="backdrop"></div>
+    <div class="coupenss card card-pad">
+        <i id="back" role="button" class="fa-regular fa-circle-xmark text-danger" style="position:absolute; right:12px; top:12px;"></i>
+        <h4 class="mb-2">Mã giảm giá khả dụng</h4>
         {{#each coupens}}
-        <div class="card p-2 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-                <input type="button" value="{{this.coupon_code}}" class=" btn btn-sm btn-primary" role="button">
-                <a class="text-decoraton-none fw-bold text-primary" role="button"
-                    onclick="applayCoupen('{{this._id}}')">Áp dụng</a>
+        <div class="card card-pad mb-2">
+            <div class="stack-md" style="justify-content:space-between; align-items:center;">
+                <input type="button" value="{{this.coupon_code}}" class="btn btn-sm btn-primary" role="button">
+                <a class="fw-bold" style="text-decoration:none;" role="button" onclick="applayCoupen('{{this._id}}')">Áp dụng</a>
             </div>
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="text-success fw-bold">Giảm giá: {{this.discount}}% </p>
-                <p class="fw-bold text-secondary">EXP: {{this.exp_date}}<br>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <p class="text-success fw-bold">Giảm giá: {{this.discount}}%</p>
+                <p class="fw-bold text-secondary">HSD: {{this.exp_date}}<br>
                     <span class="fw-bold text-secondary">Tối thiểu: {{formatVND this.min_amount}}</span>
                 </p>
             </div>
-            <p class="text-secondary description fw-normal">{{this.discription}} </p>
+            <p class="text-secondary description fw-normal">{{this.discription}}</p>
             <div role="button" class="text-primary know-more h6">xem thêm</div>
             <div role="button" class="text-primary know-less h6">thu gọn</div>
         </div>
         {{/each}}
     </div>
 </div>
-
-<style>
-    .coupenss {
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 4;
-        width: min(32rem, 95vw);
-        box-shadow: 0px 0px 20px #ccc;
-    }
-.coupens-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.35);
-    z-index: 3;
-    display: none;
-}
-.coupenss {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 4;
-    width: min(32rem, 95vw);
-    max-height: 70vh;
-    overflow-y: auto;
-    box-shadow: 0px 10px 24px rgba(0,0,0,0.2);
-    border-radius: 10px;
-}
-</style>

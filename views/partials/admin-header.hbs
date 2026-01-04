@@ -1,13 +1,13 @@
 <nav id="nav" class="navbar nav px-5" style="">
   <div href="/admin/dash" class="d-flex align-items-center gap-2 text-decoration-none">
-    <img width="100px" src="/images/logo2.svg" alt="">
+    <img width="100px" src="/images/logo.png" alt="">
   </div>
   {{#if Admin}}
   <span>{{Admin.email}}</span>
   <a class="btn btn-warning" onclick="confirmLogout('{{Admin.first_name}}','{{Admin.last_name}}')" >
-      Log Out
+      Đăng xuất
     </a>
   {{else}}
-  <h4>Admin Pannel</h4>
-   {{/if}}
+  {{!-- <h4>Admin Pannel</h4> --}}
+  {{/if}}
 </nav>

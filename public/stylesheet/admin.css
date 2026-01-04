@@ -81,28 +81,61 @@ html, body { max-width: 100vw; overflow-x: hidden; }
 }
 
 /* Tables */
-.table { width: 100% !important; max-width: 100% !important; border-collapse: separate; border-spacing: 0; }
-.table th, .table td { border-bottom: 1px solid var(--border); padding: .7rem .9rem; text-align: left; }
-.table th { background: #f8fafc; color: var(--muted-text); font-weight: 600; position: sticky; top: 0; z-index: 1; }
-.table tr:hover { background: #f9fbff; }
-.table tbody tr:nth-child(odd) { background: #fbfdff; }
+.admin-shell .table,
+.category .table {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed; /* Prevent layout shifts, enable ellipsis */
+}
+.admin-shell .table th, .category .table th,
+.admin-shell .table td, .category .table td {
+    border-bottom: 1px solid var(--border);
+    padding: .7rem .9rem;
+    text-align: left;
+    white-space: normal; /* Allow wrapping by default to avoid overflow */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.admin-shell .table th, .category .table th {
+    background: #f8fafc;
+    color: var(--muted-text);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+.admin-shell .table thead th, .category .table thead th { box-shadow: 0 1px 0 var(--border); }
+.admin-shell .table tr:hover, .category .table tr:hover { background: #f9fbff; }
+.admin-shell .table tbody tr:nth-child(odd), .category .table tbody tr:nth-child(odd) { background: #fbfdff; }
 
 /* Force common admin tables to be responsive even if inline widths are set */
-table#example,
-table#exportToTable { width: 100% !important; max-width: 100% !important; }
+.admin-shell table#example,
+.admin-shell table#exportToTable,
+.category table#example,
+.category table#exportToTable { width: 100% !important; max-width: 100% !important; }
 
 /* Allow table containers to scroll instead of page */
 .table-responsive,
 .panel-body,
 .card,
 main,
-.content { overflow-x: auto; }
+.content { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-/* Make cells wrap to reduce overflow on narrow screens */
-.table th, .table td { white-space: nowrap; }
+/* Utilities for table cell behavior */
+.nowrap { white-space: nowrap; }
+.num { text-align: right; }
+.actions { white-space: nowrap; }
+
+/* Reduce overflow further on narrow screens */
 @media (max-width: 900px) {
-    .table th, .table td { white-space: normal; word-break: break-word; }
+    .admin-shell .table th, .category .table th,
+    .admin-shell .table td, .category .table td { word-break: break-word; }
 }
+
+/* Minimum width to keep essential columns readable */
+.admin-shell .table, .category .table { min-width: 720px; }
 
 /* Cards and panels */
 .panel, .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }

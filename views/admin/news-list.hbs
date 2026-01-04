@@ -4,6 +4,7 @@
       <h3 class="h3 text-second fw-bold mb-3">Quản lý tin tức</h3>
       <a class="btn add-btn" href="/admin/news/new">+ Thêm tin</a>
     </div>
+    <div class="table-responsive">
     <table style="width: 100%;" id="example" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
     <thead>
       <tr>
@@ -21,7 +22,7 @@
         <td>{{title}}</td>
         <td>{{status}}</td>
         <td>{{toDateAndTime publishedAt}}</td>
-        <td>
+        <td class="actions">
             <a class="btn clear-btn" href="/admin/news/{{_id}}/edit">Sửa</a>
             <form method="post" action="/admin/news/{{_id}}/delete" style="display:inline">
               <button class="btn btn-danger" type="submit">Xoá</button>
@@ -31,5 +32,6 @@
       {{/each}}
     </tbody>
     </table>
+    </div>
   </div>
 </section>
