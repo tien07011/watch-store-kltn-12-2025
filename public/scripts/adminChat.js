@@ -12,26 +12,67 @@
   const headerEl = document.getElementById('chat-header');
 
   let currentUser = null;
+  // Track conversations locally for faster UI updates and unread badges
+  // Map<userId, { user, lastMessageAt, unread }>
+  const conversations = new Map();
 
-  const loadConversations = async () => {
-    const res = await fetch('/chat/conversations');
-    const data = await res.json();
+  const renderConvList = () => {
+    // Sort by lastMessageAt desc
+    const items = Array.from(conversations.values()).sort((a, b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt));
     convList.innerHTML = '';
-    (data.conversations || []).forEach(({ user, lastMessageAt }) => {
+    items.forEach(({ user, lastMessageAt, unread }) => {
       const li = document.createElement('li');
       li.style.padding = '10px';
       li.style.cursor = 'pointer';
       li.style.borderBottom = '1px solid #eee';
-      li.textContent = `${user?.name || user?.email || user?._id} — ${new Date(lastMessageAt).toLocaleString()}`;
+      li.dataset.userId = String(user?._id);
+      const label = `${user?.name || user?.email || user?._id} — ${new Date(lastMessageAt).toLocaleString()}`;
+      // Build row with optional unread badge
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = label;
+      li.appendChild(nameSpan);
+      if (unread && unread > 0 && (!currentUser || String(currentUser._id) !== String(user?._id))) {
+        const badge = document.createElement('span');
+        badge.textContent = ` ${unread}`;
+        badge.style.background = '#e53935';
+        badge.style.color = '#fff';
+        badge.style.borderRadius = '10px';
+        badge.style.fontSize = '12px';
+        badge.style.padding = '2px 6px';
+        badge.style.marginLeft = '8px';
+        li.appendChild(badge);
+      }
+      // Highlight selected user
+      if (currentUser && String(currentUser._id) === String(user?._id)) {
+        li.style.background = '#f9f9f9';
+        li.style.fontWeight = '600';
+      }
       li.addEventListener('click', () => selectUser(user));
       convList.appendChild(li);
     });
+  };
+
+  const loadConversations = async () => {
+    const res = await fetch('/chat/conversations');
+    const data = await res.json();
+    conversations.clear();
+    (data.conversations || []).forEach(({ user, lastMessageAt }) => {
+      conversations.set(String(user?._id), { user, lastMessageAt, unread: 0 });
+    });
+    renderConvList();
   };
 
   const selectUser = async (user) => {
     currentUser = user;
     headerEl.textContent = `Đang chat với: ${user?.name || user?.email || user?._id}`;
     messagesEl.innerHTML = '';
+    // Reset unread for selected user
+    const entry = conversations.get(String(user._id));
+    if (entry) {
+      entry.unread = 0;
+      conversations.set(String(user._id), entry);
+      renderConvList();
+    }
     const res = await fetch(`/chat/conversation/${user._id}`);
     const data = await res.json();
     (data.messages || []).forEach((m) => renderMsg(m, m.senderModel === 'Admin'));
@@ -80,9 +121,42 @@
 
   socket.on('chat:message', (msg) => {
     console.log('[adminChat] chat:message', msg);
-    if (!currentUser || String(msg.senderModel) === 'Admin') return;
-    if (String(msg.senderId) === String(currentUser._id) || String(msg.recipientId) === String(currentUser._id)) {
-      renderMsg(msg, false);
+    // Update conversations list for new incoming user messages
+    const isUserMsg = String(msg.senderModel) === 'User';
+    const senderId = String(msg.senderId || '');
+    const recipientId = String(msg.recipientId || '');
+    const ts = msg.createdAt || Date.now();
+
+    // If message from a user, bump convo and set unread when not focused
+    if (isUserMsg) {
+      const existing = conversations.get(senderId);
+      if (existing) {
+        existing.lastMessageAt = ts;
+        // Increment unread unless viewing this user
+        if (!currentUser || String(currentUser._id) !== senderId) {
+          existing.unread = (existing.unread || 0) + 1;
+        }
+        conversations.set(senderId, existing);
+        renderConvList();
+      } else {
+        // Unknown user (new conversation): refresh list from server
+        loadConversations();
+      }
+    }
+
+    // Render into the active chat pane if it belongs to the selected user
+    if (currentUser && (senderId === String(currentUser._id) || recipientId === String(currentUser._id))) {
+      // Do not double-render admin's own messages here
+      if (isUserMsg) {
+        renderMsg(msg, false);
+        // Clear unread since user is active
+        const entry = conversations.get(senderId);
+        if (entry) {
+          entry.unread = 0;
+          conversations.set(senderId, entry);
+          renderConvList();
+        }
+      }
     }
   });
 
