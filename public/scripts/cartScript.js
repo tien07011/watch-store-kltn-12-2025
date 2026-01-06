@@ -1,4 +1,51 @@
 $(document).ready(() => {
+    const formatVND = (value) => {
+        const num = Number(value) || 0;
+        return num.toLocaleString('vi-VN') + ' vnđ';
+    };
+
+    const updateSelectionSummary = () => {
+        let count = 0;
+        let total = 0;
+        document.querySelectorAll('.cart-item-select:checked').forEach((el) => {
+            count += 1;
+            const price = Number(el.getAttribute('data-price')) || 0;
+            const qty = Number(el.getAttribute('data-qty')) || 1;
+            total += price * qty;
+        });
+        const btn = document.getElementById('btnCartCheckout');
+        const c = document.getElementById('selectedCount');
+        const t = document.getElementById('selectedTotal');
+        const gt = document.getElementById('selectedGrandTotal');
+        if (c) c.textContent = String(count);
+        if (t) t.textContent = formatVND(total);
+        if (gt) gt.textContent = formatVND(total);
+        if (btn) btn.disabled = count === 0;
+    };
+
+    // Bind change events for selection
+    document.addEventListener('change', (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains('cart-item-select')) {
+            updateSelectionSummary();
+        }
+    });
+
+    // Checkout with selected items only
+    const btnCheckout = document.getElementById('btnCartCheckout');
+    if (btnCheckout) {
+        btnCheckout.addEventListener('click', () => {
+            const selected = Array.from(document.querySelectorAll('.cart-item-select:checked')).map(el => el.value);
+            if (!selected.length) {
+                Swal.fire('Chưa chọn sản phẩm', 'Vui lòng tích chọn sản phẩm để thanh toán.', 'warning');
+                return;
+            }
+            const url = `/cart/checkout?items=${encodeURIComponent(selected.join(','))}`;
+            location.assign(url);
+        });
+    }
+
+    // Initial summary
+    updateSelectionSummary();
     addToCart = async (productID) => {
         await fetch(`/cart/add-to-cart/${productID}`, {
             method: 'GET'

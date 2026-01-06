@@ -159,8 +159,8 @@
       fd.append('image', file);
       const res = await fetch('/chat/message/image', { method: 'POST', body: fd });
       if (res.ok) {
-        const data = await res.json();
-        renderMsg(data.message, true);
+        // Do not render locally; rely on socket echo to display once
+        try { await res.json(); } catch (_) {}
         imageInput.value = '';
       }
     };

@@ -164,7 +164,16 @@ const minus_cart_quantity = async (req, res) => {
 const render_checkout = async (req, res) => {
     let userId = res.locals.userData._id;
     const address = await Address.find({ customer_id: userId, delete: false });
+    // Limit to selected items if provided
+    const selectedItemsParam = (req.query.items || '').trim();
+    let selectedSet = null;
+    if (selectedItemsParam) {
+        selectedSet = new Set(String(selectedItemsParam).split(',').map(s => s.trim()).filter(Boolean));
+    }
     let cart = res.locals.userData.cart
+    if (selectedSet) {
+        cart = cart.filter(it => selectedSet.has(String(it.product_id)));
+    }
     let sellingPrice = [];
     for (let i = 0; i < cart.length; i++) {
         let sellingprice = await Product.find({ _id: cart[i].product_id }, { _id: 0, selling_price: 1 });
@@ -236,7 +245,8 @@ const render_checkout = async (req, res) => {
 
 
     // rendering to checkout page
-    res.render('user/checkout', { user: true, coupens, wallet, user, address, cart, totalAmount, checkout: true });
+    const selectedItems = selectedItemsParam || '';
+    res.render('user/checkout', { user: true, coupens, wallet, user, address, cart, totalAmount, selectedItems, checkout: true });
 
 
 }
@@ -248,6 +258,7 @@ const place_order = async (req, res) => {
         const isConfirmed = (req.body.payment_method === 'COD' || req.body.payment_method === 'wallet');
         const status = isConfirmed ? 'confirmed' : 'pending';
 
+        // Build cart list and optionally filter by selected items
         let cartList = await User.aggregate([
             { $match: { _id: customer_id } },
             { $project: { cart: 1, _id: 0 } },
@@ -269,6 +280,14 @@ const place_order = async (req, res) => {
                 }
             }
         ]);
+
+        // Limit to selected items if provided
+        const selectedItemsStr = (req.body.selectedItems || '').trim();
+        let selectedSet = null;
+        if (selectedItemsStr) {
+            selectedSet = new Set(String(selectedItemsStr).split(',').map(s => s.trim()).filter(Boolean));
+            cartList = cartList.filter(it => selectedSet.has(String(it.cart.product_id)));
+        }
 
         let items = [];
         const address = await Address.findOne({ _id: req.body.address });
@@ -326,7 +345,11 @@ const place_order = async (req, res) => {
         if (req.body.payment_method === 'COD') {
             const created = await Order.create(order);
             if (created) {
-                await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
+                if (selectedSet && selectedSet.size) {
+                    await User.updateOne({ _id: customer_id }, { $pull: { cart: { product_id: { $in: Array.from(selectedSet) } } } });
+                } else {
+                    await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
+                }
                 for (let i = 0; i < items.length; i++) {
                     await Product.updateOne({ _id: items[i].product_id }, { $inc: { stock: -(items[i].quantity) } });
                 }
@@ -337,7 +360,11 @@ const place_order = async (req, res) => {
             const created = await Order.create(order);
             if (created) {
                 const user = res.locals.userData;
-                await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
+                if (selectedSet && selectedSet.size) {
+                    await User.updateOne({ _id: customer_id }, { $pull: { cart: { product_id: { $in: Array.from(selectedSet) } } } });
+                } else {
+                    await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
+                }
                 await User.updateOne({ _id: customer_id }, { $set: { user_wallet: parseInt(user.user_wallet) - parseInt(req.body.price) } });
                 const newHistoryItem = { amount: parseInt(req.body.price), status: 'Debit', time: Date.now() };
                 await User.findByIdAndUpdate({ _id: customer_id }, { $push: { wallet_history: newHistoryItem } }, { new: true });
@@ -450,7 +477,13 @@ const verifyPaymenet = async (req, res) => {
         for (let i = 0; i < items.length; i++) {
             await Product.updateOne({ _id: items[i].product_id }, { $inc: { stock: -(items[i].quantity) } });
         }
-        await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
+        const selectedItemsStr = (req.body.selectedItems || '').trim();
+        if (selectedItemsStr) {
+            const set = new Set(String(selectedItemsStr).split(',').map(s => s.trim()).filter(Boolean));
+            await User.updateOne({ _id: customer_id }, { $pull: { cart: { product_id: { $in: Array.from(set) } } } });
+        } else {
+            await User.updateOne({ _id: customer_id }, { $unset: { cart: '' } });
+        }
         let paymentId = req.body.razorpay_order_id;
         const orderID = await Payment.findOne({ payment_id: paymentId }, { _id: 0, order_id: 1 });
         const order_id = orderID.order_id;
@@ -532,7 +565,9 @@ const momoIpn = async (req, res) => {
                 for (let i = 0; i < order.items.length; i++) {
                     await Product.updateOne({ _id: order.items[i].product_id }, { $inc: { stock: -(order.items[i].quantity) } });
                 }
-                await User.updateOne({ _id: order.customer_id }, { $unset: { cart: '' } });
+                // Remove only ordered items from the user's cart
+                const orderedIds = order.items.map(i => i.product_id);
+                await User.updateOne({ _id: order.customer_id }, { $pull: { cart: { product_id: { $in: orderedIds } } } });
                 await Order.updateOne({ _id: orderId }, { $set: { 'items.$[].status': 'confirmed', status: 'confirmed' } });
 
                 let couponId = order.coupon && order.coupon.coupon_id ? order.coupon.coupon_id : null;
