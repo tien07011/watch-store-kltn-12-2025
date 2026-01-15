@@ -15,15 +15,15 @@
 
     <div class="details d-flex justify-content-around mb-3 ">
         <div class="d-flex rounded flex-column align-items-center px-4 justify-content-center stat-card">
-            <p class="mt-4 stat-title" style="margin-bottom:-10px;">Total Revenue</p>
+            <p class="mt-4 stat-title" style="margin-bottom:-10px;">Tổng doanh thu</p>
             <p class="fw-bold fa-2x stat-value">{{formatVND totalRevenew}}</p>
         </div>
         <div class="d-flex rounded flex-column align-items-center px-4 justify-content-center add-btn fw-bold">
-            <p class="text-white mt-4" style="margin-bottom:-10px;">Total Customers</p>
+            <p class="text-white mt-4" style="margin-bottom:-10px;">Tổng khách hàng</p>
             <p class="text-white fw-bold fa-2x">{{custommers}}</p>
         </div>
         <div class="d-flex rounded flex-column align-items-center px-4 justify-content-center bg-danger fw-bold">
-            <p class="text-white mt-4" style="margin-bottom:-10px;">Total Products</p>
+            <p class="text-white mt-4" style="margin-bottom:-10px;">Tổng sản phẩm</p>
             <p class="text-white fw-bold fa-2x">{{products}}</p>
         </div>
     </div>
@@ -44,13 +44,13 @@
         cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th class="th-sm">Customer</th>
-                <th class="th-sm">Product_Name</th>
-                <th class="th-sm">Ordered_Date</th>
-                <th class="th-sm">Delivered_Date</th>
-                <th class="th-sm">Quantity</th>
-                <th class="th-sm">Payment</th>
-                <th class="th-sm">Amount</th>
+                <th class="th-sm">Khách hàng</th>
+                <th class="th-sm">Tên sản phẩm</th>
+                <th class="th-sm">Ngày đặt</th>
+                <th class="th-sm">Ngày giao</th>
+                <th class="th-sm">Số lượng</th>
+                <th class="th-sm">Thanh toán</th>
+                <th class="th-sm">Thành tiền</th>
             </tr>
         </thead>
         <tbody>
@@ -62,7 +62,7 @@
                 {{#if this.items.delivered_on}}
                 <td>{{toDateAndTime this.items.delivered_on}}</td>
                 {{else}}
-                <td>Item not delivered yet</td>
+                <td>Chưa giao hàng</td>
                 {{/if}}
                 <td>{{this.items.quantity}}</td>
                 <td>{{this.payment_method}}</td>

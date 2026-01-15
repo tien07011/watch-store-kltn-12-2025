@@ -17,13 +17,13 @@ const show_all_customers = async (req, res) => {
 
 const customer_block = async (req, res) => {
     const customer = await User.findByIdAndUpdate({ _id: req.params.id }, { user_status: false })
-    req.flash('success', 'User Blocked');
+    req.flash('success', 'Đã khóa người dùng');
     res.redirect('/admin/customers')
 }
 
 const customer_unblock = async (req, res) => {
     const customer = await User.findByIdAndUpdate({ _id: req.params.id }, { user_status: true })
-    req.flash('success', 'User Unblocked');
+    req.flash('success', 'Đã mở khóa người dùng');
     res.redirect('/admin/customers')
 }
 

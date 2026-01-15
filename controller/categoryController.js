@@ -4,11 +4,11 @@ const Category = require('../models/categoryModel')
 const crateCategory = async (req, res) => {
     const category = await Category.findOne({ cat_name: req.body.cat_name })
     if (category) {
-        req.flash('error', 'Category Already Exist!')
+        req.flash('error', 'Danh mục đã tồn tại!')
         res.redirect('/admin/categories/new-category')
     } else {
         const newCategory = await Category.create(req.body)
-        req.flash('success', 'New Category Added Succefully')
+        req.flash('success', 'Đã thêm danh mục mới thành công')
         res.redirect('/admin/categories')
     }
 }
@@ -35,13 +35,13 @@ const UpdateCategory = async (req, res) => {
         const id = req.body._id
         const checkCategoty = await Category.findOne({ cat_name: req.body.cat_name });
         if (checkCategoty) {
-            req.flash('error', 'Category Already Exists');
+            req.flash('error', 'Danh mục đã tồn tại');
             res.redirect(`/admin/categories/edit_category/${id}`);
         } else {
             delete req.body._id
             const newData = req.body
             const updated = await Category.findOneAndUpdate({ _id: id }, newData, { new: true })
-            req.flash('success', 'Category Updated Successfully');
+            req.flash('success', 'Cập nhật danh mục thành công');
             res.redirect('/admin/categories');
         }
     }
@@ -58,7 +58,7 @@ const delete_category = async (req, res) => {
     if (category) {
         let id = req.params.id
         const updated = await Category.findOneAndUpdate({ _id: id }, { delete: true }, { new: true })
-        req.flash('success', 'Category Deleted successfully');
+        req.flash('success', 'Đã xóa danh mục thành công');
         res.redirect('/admin/categories')
     }
 }

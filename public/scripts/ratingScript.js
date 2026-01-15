@@ -15,7 +15,7 @@ for (let i = 0; i <= ratingg; i++) {
     $('#' + i).addClass('fa-solid');
 }
 
-// rating form
+// form đánh giá
 $('#rating-form').validate({
     rules: {
         rating: {
@@ -41,8 +41,8 @@ $('#rating-form').validate({
                     if (data.success) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Success',
-                            text: 'Your rating has been submitted',
+                            title: 'Thành công',
+                            text: 'Đánh giá của bạn đã được gửi',
                         }).then(() => {
                             location.assign('/reviews');
                         })
@@ -55,14 +55,14 @@ $('#rating-form').validate({
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: 'Please select a rating',
+                title: 'Ôi...',
+                text: 'Vui lòng chọn số sao đánh giá',
             })
         }
     }
 })
 
-// edit form
+// form sửa đánh giá
 $('#edit-rating-form').validate({
     rules: {
         rating: {
@@ -88,8 +88,8 @@ $('#edit-rating-form').validate({
                     if (data.success) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Success',
-                            text: 'Your rating has been editted',
+                            title: 'Thành công',
+                            text: 'Đánh giá của bạn đã được cập nhật',
                         }).then(() => {
                             location.assign('/reviews');
                         })
@@ -102,24 +102,24 @@ $('#edit-rating-form').validate({
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: 'Please select a rating',
+                title: 'Ôi...',
+                text: 'Vui lòng chọn số sao đánh giá',
             })
         }
     }
 })
 
-// delete review
+// xóa đánh giá
 // /reviews/delete-reivew/{{this._id}}
 const deleteReview = async (id) => {
     Swal.fire({
-        title: 'Are you sure?',
-        text: `Are you sure want to delete`,
+        title: 'Bạn chắc chứ?',
+        text: 'Bạn có chắc muốn xóa không?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#1d4391',
         cancelButtonColor: 'rgb(107, 119, 136)',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Vâng, xóa!'
     }).then(async (result) => {
         if (result.isConfirmed) {
             await fetch(`/reviews/delete-reivew/${id}`)
@@ -128,8 +128,8 @@ const deleteReview = async (id) => {
                     if (data.success) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Success',
-                            text: 'Your rating has been deleted',
+                            title: 'Thành công',
+                            text: 'Đã xóa đánh giá của bạn',
                         }).then(() => {
                             location.assign('/reviews');
                         })
