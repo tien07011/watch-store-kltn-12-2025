@@ -6,8 +6,7 @@
             <img style="width: 5rem;" src="/productImages/{{this.products.primary_image.name}}" alt="">
             <div class="h5 fw-bold">{{this.products.product_name}}
                 <span style="font-size: 0.9rem;" class="fw-normal"><br> Quantity:{{this.items.quantity}}</span>
-                <span style="font-size: 0.9rem;" class="fw-bold text-success">&nbsp &nbsp &nbsp &#160 ₹
-                    {{this.items.price}}</span>
+                <span style="font-size: 0.9rem;" class="fw-bold text-success">&nbsp &nbsp &nbsp &#160 {{formatVND this.items.price}}</span>
             </div>
             {{#if this.items.delivered}}
             <div style="width:60%; height:1rem" class="d-flex align-items-center justify-content-end">

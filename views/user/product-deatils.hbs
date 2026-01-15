@@ -64,7 +64,7 @@
             <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i> Còn lại {{product.stock}}</span>
             <span class="text-success ms-2">Còn hàng</span>
           </div>
-          <span class="h5 text-second price-vnd" id="detail-price">{{product.selling_price}}₫</span>
+          <span class="h5 text-second price-vnd" id="detail-price">{{formatVND product.selling_price}}</span>
           <p>
             {{product.description}}
           </p>
@@ -209,16 +209,7 @@
     }
   }
 
-  // Price formatter for VND with dots and 'đ'
-  (function(){
-    function formatVND(value){
-      const n = Number(String(value).replace(/[^0-9]/g, ''));
-      if (!Number.isFinite(n)) return value;
-      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
-    }
-    const el = document.getElementById('detail-price');
-    if (el) el.textContent = formatVND(el.textContent);
-  })();
+  // Price is rendered server-side via {{formatVND}}
 
   // Client-side validation before submit rating
   (function(){

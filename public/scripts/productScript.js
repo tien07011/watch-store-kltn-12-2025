@@ -1,10 +1,10 @@
-// Format prices to Vietnamese style: 1.500.000đ
+// Format prices to Vietnamese style: 1.500.000 vnđ
 function formatVND(value) {
-    const n = Number(String(value).replace(/[^0-9]/g, ''));
+    const n = Number(String(value ?? '').replace(/[^0-9-]/g, ''));
     if (!Number.isFinite(n)) return value;
     // format with dot as thousand separator
-    const formatted = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    return formatted + 'đ';
+    const formatted = n.toLocaleString('vi-VN');
+    return formatted + ' vnđ';
 }
 
 function applyPriceFormatting() {
@@ -14,11 +14,8 @@ function applyPriceFormatting() {
         el.textContent = formatVND(raw);
     });
     // format price badges inside product cards (right-top badge)
-    document.querySelectorAll('.product-card .badge').forEach(el => {
-        // try to detect badges that are price (contains digits)
-        if (/\d/.test(el.textContent)) {
-            el.textContent = formatVND(el.textContent);
-        }
+    document.querySelectorAll('.product-card .price-badge').forEach(el => {
+        el.textContent = formatVND(el.textContent);
     });
 }
 

@@ -107,7 +107,9 @@ handlebars.registerHelper('json', function (context) { return JSON.stringify(con
 
 // Currency formatting: Vietnamese đồng with thousand separators
 handlebars.registerHelper('formatVND', function (value) {
-  const num = Number(value) || 0;
+  // Accept numbers or strings like "1500000", "1.500.000", "1,500,000 vnđ", "1500000₫"
+  const cleaned = String(value ?? '').replace(/[^0-9-]/g, '');
+  const num = Number(cleaned) || 0;
   return num.toLocaleString('vi-VN') + ' vnđ';
 });
 
