@@ -45,21 +45,43 @@ $(document).ready(() => {
     }
 
     // Initial summary
+    // Auto-select items if query contains ?select=<id1,id2>
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const selectParam = (params.get('select') || '').trim();
+        if (selectParam) {
+            const selected = new Set(selectParam.split(',').map(s => s.trim()).filter(Boolean));
+            document.querySelectorAll('.cart-item-select').forEach((el) => {
+                el.checked = selected.has(String(el.value));
+            });
+        }
+    } catch (e) {
+        // ignore
+    }
+
     updateSelectionSummary();
+
     addToCart = async (productID) => {
-        await fetch(`/cart/add-to-cart/${productID}`, {
+        return await fetch(`/cart/add-to-cart/${productID}`, {
             method: 'GET'
-        }).then(response => response.json())
+        })
+            .then(response => response.json())
             .then(data => {
                 if (data.status) {
                     let cartCount = document.getElementById('cartCount');
                     if (cartCount) {
                         cartCount.innerText = data.count
                     }
-                } else {
-                    location.assign('/cart')
+                    return true;
                 }
+
+                // status=false usually means "already in cart".
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire('Sản phẩm đã có trong giỏ', 'Bạn có thể tăng số lượng trong giỏ hàng.', 'info');
+                }
+                return false;
             })
+            .catch(() => false);
     },
         removeFromCart = async (product_ID) => {
             Swal.fire({

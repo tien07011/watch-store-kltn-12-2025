@@ -74,6 +74,26 @@
     const $panel = $("#prof-div");
     const $navbar = $("#navbar");
     const $menuToggle = $("#menuToggle");
+    const $searchInput = $("#searchInput");
+
+    // Lấy giá trị từ param URL (ưu tiên 'key', sau đó 'search')
+    const getParam = (name) => {
+      const params = new URLSearchParams(window.location.search);
+      let val = params.get(name);
+      if (!val) return null;
+      // Giải mã và chuyển '+' thành khoảng trắng cho hiển thị thân thiện
+      try {
+        val = decodeURIComponent(val.replace(/\+/g, ' '));
+      } catch (e) {}
+      return val;
+    };
+
+    const urlKey = getParam('key');
+    const urlSearch = getParam('search');
+    const finalSearch = urlKey ?? urlSearch;
+    if (finalSearch && $searchInput.length) {
+      $searchInput.val(finalSearch);
+    }
 
     $profileBtn.on('click', function (e) {
       e.stopPropagation();

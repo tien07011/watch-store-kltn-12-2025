@@ -197,16 +197,18 @@
 
   });
 
-  // Buy now: add to cart then go to checkout
-  function buyNow(pid){
+  // Buy now: ensure in cart, then open cart with only this item selected
+  async function buyNow(pid){
     try {
       if (typeof addToCart === 'function') {
-        addToCart(pid);
+        await addToCart(pid);
+      } else {
+        await fetch(`/cart/add-to-cart/${pid}`, { method: 'GET' });
       }
-      window.location.href = '/cart/checkout';
     } catch (e) {
-      window.location.href = '/cart/checkout';
+      // ignore
     }
+    window.location.href = `/cart?select=${encodeURIComponent(pid)}`;
   }
 
   // Price is rendered server-side via {{formatVND}}

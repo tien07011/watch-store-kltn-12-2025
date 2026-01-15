@@ -11,6 +11,8 @@ const crypto = require('crypto');
 const https = require('https');
 const momoConfig = require('../config/momoConfig');
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 
 //adding item to cart
 const addProductToCart = async (userID, productId) => {
@@ -464,6 +466,91 @@ const createMomoOrder = ({ orderId, amount, returnUrl, ipnUrl, orderInfo, extraD
     });
 };
 
+// Query MoMo transaction status (useful when IPN can't reach local dev env)
+const queryMomoOrder = ({ orderId }) => {
+    return new Promise((resolve) => {
+        try {
+            const requestId = `${orderId}-${Date.now()}`;
+            const rawSignature = `accessKey=${momoConfig.accessKey}&orderId=${orderId}&partnerCode=${momoConfig.partnerCode}&requestId=${requestId}`;
+            const signature = crypto.createHmac('sha256', momoConfig.secretKey).update(rawSignature).digest('hex');
+
+            const body = JSON.stringify({
+                partnerCode: momoConfig.partnerCode,
+                accessKey: momoConfig.accessKey,
+                requestId,
+                orderId,
+                signature,
+                lang: 'vi'
+            });
+
+            const createUrl = new URL(momoConfig.endpoint);
+            const options = {
+                hostname: createUrl.hostname,
+                path: '/v2/gateway/api/query',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(body)
+                }
+            };
+
+            const req = https.request(options, (res) => {
+                let data = '';
+                res.on('data', (chunk) => { data += chunk; });
+                res.on('end', () => {
+                    try {
+                        const parsed = JSON.parse(data || '{}');
+                        resolve(parsed);
+                    } catch {
+                        resolve(null);
+                    }
+                });
+            });
+            req.on('error', () => resolve(null));
+            req.write(body);
+            req.end();
+        } catch {
+            resolve(null);
+        }
+    });
+};
+
+const confirmMomoPaidOrder = async ({ orderId, transId, amount }) => {
+    const order = await Order.findById(orderId);
+    if (!order) return { ok: false, reason: 'order_not_found' };
+    if (String(order.status) === 'confirmed') return { ok: true, already: true };
+
+    for (let i = 0; i < order.items.length; i++) {
+        await Product.updateOne({ _id: order.items[i].product_id }, { $inc: { stock: -(order.items[i].quantity) } });
+    }
+
+    const orderedIds = order.items.map(i => i.product_id);
+    await User.updateOne({ _id: order.customer_id }, { $pull: { cart: { product_id: { $in: orderedIds } } } });
+    await Order.updateOne({ _id: orderId }, { $set: { 'items.$[].status': 'confirmed', status: 'confirmed' } });
+
+    const couponId = order.coupon && order.coupon.coupon_id ? order.coupon.coupon_id : null;
+    if (couponId) {
+        await Coupen.findByIdAndUpdate(
+            { _id: couponId },
+            { $inc: { used_count: 1 }, $push: { user_list: order.customer_id } },
+            { new: true }
+        );
+    }
+
+    await Payment.updateOne(
+        { order_id: order._id },
+        {
+            $set: {
+                status: 'paid',
+                amount: parseInt(amount || order.total_amount || 0),
+                payment_id: String(transId || orderId)
+            }
+        }
+    );
+
+    return { ok: true };
+};
+
 //verifying payment (legacy Razorpay support if needed)
 const verifyPaymenet = async (req, res) => {
     const hmac = crypto.createHmac('sha256', process.env.RAZ_SECRET_KEY);
@@ -509,18 +596,40 @@ const verifyPaymenet = async (req, res) => {
 const momoReturn = async (req, res) => {
     try {
         const { resultCode, orderId } = req.query;
-        // Always check DB status; IPN is the source of truth
-        if (orderId) {
-            const order = await Order.findById(orderId).lean();
+        // ReturnUrl is NOT trusted to confirm; IPN is source of truth.
+        // But for better UX, wait a short time for IPN to update the order.
+        if (!orderId) return res.redirect('/');
+
+        // If MoMo says failed/canceled, send user back early.
+        if (String(resultCode) !== '0') {
+            req.flash('error', 'Thanh toán không thành công hoặc đã bị huỷ.');
+            return res.redirect('/');
+        }
+
+        for (let i = 0; i < 10; i++) {
+            const order = await Order.findById(orderId).select('status').lean();
             if (order && String(order.status) === 'confirmed') {
                 req.session.order = { status: true };
                 return res.redirect('/cart/order-success');
             }
-            // If not yet confirmed, show a pending page or redirect to orders
-            // You may create a dedicated pending view; for now redirect to cart with a flash message
-            req.flash('info', 'Thanh toán đang xử lý, vui lòng chờ trong giây lát.');
-            return res.redirect('/');
+            await sleep(800);
         }
+
+        // Fallback: if IPN can't reach this server (common in localhost), query MoMo and confirm here.
+        const momoInfo = await queryMomoOrder({ orderId });
+        if (momoInfo && String(momoInfo.resultCode) === '0') {
+            const confirmed = await confirmMomoPaidOrder({
+                orderId,
+                transId: momoInfo.transId,
+                amount: momoInfo.amount
+            });
+            if (confirmed && confirmed.ok) {
+                req.session.order = { status: true };
+                return res.redirect('/cart/order-success');
+            }
+        }
+
+        req.flash('info', 'Thanh toán đang xử lý, vui lòng chờ trong giây lát.');
         return res.redirect('/');
     } catch {
         return res.redirect('/');
@@ -532,7 +641,6 @@ const momoIpn = async (req, res) => {
     try {
         const {
             partnerCode,
-            accessKey,
             amount,
             orderId,
             orderInfo,
@@ -547,12 +655,13 @@ const momoIpn = async (req, res) => {
             signature,
         } = req.body || {};
 
-        if (partnerCode !== momoConfig.partnerCode || accessKey !== momoConfig.accessKey) {
+        if (!orderId || !partnerCode || partnerCode !== momoConfig.partnerCode) {
             return res.status(400).json({ message: 'Invalid partner' });
         }
 
         if (signature) {
-            const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData || ''}&message=${message || ''}&orderId=${orderId}&orderInfo=${orderInfo || ''}&orderType=${orderType || ''}&partnerCode=${partnerCode}&payType=${payType || ''}&requestId=${requestId}&responseTime=${responseTime || ''}&resultCode=${resultCode}&transId=${transId || ''}`;
+            const accessKeyValue = momoConfig.accessKey;
+            const rawSignature = `accessKey=${accessKeyValue}&amount=${amount}&extraData=${extraData || ''}&message=${message || ''}&orderId=${orderId}&orderInfo=${orderInfo || ''}&orderType=${orderType || ''}&partnerCode=${partnerCode}&payType=${payType || ''}&requestId=${requestId || ''}&responseTime=${responseTime || ''}&resultCode=${resultCode}&transId=${transId || ''}`;
             const expected = crypto.createHmac('sha256', momoConfig.secretKey).update(rawSignature).digest('hex');
             if (expected !== signature) {
                 return res.status(400).json({ message: 'Invalid signature' });
@@ -560,34 +669,16 @@ const momoIpn = async (req, res) => {
         }
 
         if (String(resultCode) === '0') {
-            const order = await Order.findById(orderId);
-            if (order) {
-                for (let i = 0; i < order.items.length; i++) {
-                    await Product.updateOne({ _id: order.items[i].product_id }, { $inc: { stock: -(order.items[i].quantity) } });
-                }
-                // Remove only ordered items from the user's cart
-                const orderedIds = order.items.map(i => i.product_id);
-                await User.updateOne({ _id: order.customer_id }, { $pull: { cart: { product_id: { $in: orderedIds } } } });
-                await Order.updateOne({ _id: orderId }, { $set: { 'items.$[].status': 'confirmed', status: 'confirmed' } });
-
-                let couponId = order.coupon && order.coupon.coupon_id ? order.coupon.coupon_id : null;
-                if (couponId) {
-                    await Coupen.findByIdAndUpdate(
-                        { _id: couponId },
-                        { $inc: { used_count: 1 }, $push: { user_list: order.customer_id } },
-                        { new: true }
-                    );
-                }
-
-                await Payment.updateOne(
-                    { order_id: order._id },
-                    { $set: { status: 'paid', amount: parseInt(amount || 0), payment_id: transId || orderId } }
-                );
-            }
+            await confirmMomoPaidOrder({ orderId, transId, amount });
             return res.json({ message: 'ok' });
         }
 
-        await Payment.updateOne({ order_id: orderId }, { $set: { status: 'failed' } });
+        // order_id is ObjectId in Payment; convert safely (fallback to payment_id)
+        if (mongoose.Types.ObjectId.isValid(orderId)) {
+            await Payment.updateOne({ order_id: new mongoose.Types.ObjectId(orderId) }, { $set: { status: 'failed' } });
+        } else {
+            await Payment.updateOne({ payment_id: String(orderId) }, { $set: { status: 'failed' } });
+        }
         return res.json({ message: 'failed' });
     } catch (e) {
         return res.status(500).json({ message: 'error' });
