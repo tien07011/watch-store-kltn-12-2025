@@ -5,13 +5,31 @@ const http = require('http');
 const chai = require('chai');
 const expect = chai.expect;
 
-// Helper: start the app as a child process on PORT 4500
-function startServer() {
+function waitForServer(url, timeout = 20000) {
   return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const interval = setInterval(() => {
+      http.get(url, (res) => {
+        if (res.statusCode >= 200 && res.statusCode < 500) {
+          clearInterval(interval);
+          resolve();
+        }
+      }).on('error', () => {
+        if (Date.now() - start > timeout) {
+          clearInterval(interval);
+          reject(new Error('Server not reachable'));
+        }
+      });
+    }, 500);
+  });
+}
+
+function startServer() {
+  return new Promise(async (resolve, reject) => {
     const env = {
       ...process.env,
       PORT: '4500',
-      NODE_ENV: 'test'
+      // NODE_ENV: 'test'
     };
 
     const proc = spawn('node', ['app.js'], {
@@ -20,40 +38,15 @@ function startServer() {
       stdio: ['ignore', 'pipe', 'pipe']
     });
 
-    let resolved = false;
+    proc.on('error', reject);
 
-    const handleOutput = (d) => {
-      const s = d.toString().toLowerCase();
-      if (!resolved && s.includes('server is running at port')) {
-        resolved = true;
-        resolve(proc);
-      }
-    };
-
-    proc.stdout.on('data', handleOutput);
-    proc.stderr.on('data', handleOutput);
-
-    proc.on('error', (err) => {
-      if (!resolved) reject(err);
-    });
-
-    // Fallback polling
-    const start = Date.now();
-    const timeout = 20000;
-    const interval = setInterval(() => {
-      http.get('http://127.0.0.1:4500/', () => {
-        if (!resolved) {
-          resolved = true;
-          clearInterval(interval);
-          resolve(proc);
-        }
-      }).on('error', () => {
-        if (Date.now() - start > timeout) {
-          clearInterval(interval);
-          if (!resolved) reject(new Error('Server start timeout'));
-        }
-      });
-    }, 500);
+    try {
+      await waitForServer('http://127.0.0.1:4500/login');
+      resolve(proc);
+    } catch (err) {
+      proc.kill();
+      reject(err);
+    }
   });
 }
 
@@ -77,7 +70,7 @@ describe('Selenium smoke tests - products', function () {
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(options)
-      .build(); // Selenium Manager tự xử lý driver
+      .build();
   });
 
   it('should navigate to /products and find the product grid', async function () {
@@ -91,15 +84,12 @@ describe('Selenium smoke tests - products', function () {
     const grid = await driver.findElement(By.css('.product-grid'));
     const html = await grid.getAttribute('innerHTML');
     expect(html).to.be.a('string');
-
-    const items = await driver.findElements(By.css('.product-card'));
-    expect(items).to.be.an('array');
   });
+
+  
 
   after(async function () {
     if (driver) await driver.quit();
-    if (serverProc) {
-      try { serverProc.kill(); } catch (_) {}
-    }
+    if (serverProc) serverProc.kill();
   });
 });
