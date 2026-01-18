@@ -185,4 +185,41 @@ $(document).ready(() => {
                 }
             })
     }
+
+        // Recommendations rendering on cart page
+        (function initRecommendations(){
+                const grid = document.getElementById('recGrid');
+                const empty = document.getElementById('recEmpty');
+                if (!grid) return;
+                fetch('/recommendations?limit=8').then(r=>r.json()).then(data => {
+                        if (!data || !data.success) return;
+                        const items = Array.isArray(data.items) ? data.items : [];
+                        if (!items.length) {
+                                if (empty) empty.style.display = 'block';
+                                return;
+                        }
+                        grid.innerHTML = '';
+                        items.forEach(p => {
+                                const col = document.createElement('div');
+                                col.className = 'col-6 col-md-3';
+                                col.innerHTML = `
+                                    <div class="card h-100 product-card">
+                                        <div class="position-relative">
+                                            <span class="badge bg-secondary position-absolute top-0 end-0" style="z-index:1;">${formatVND(p.selling_price)}</span>
+                                            <img src="/productImages/${p?.primary_image?.name || ''}" class="card-img-top" alt="${p.product_name}" />
+                                        </div>
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title" title="${p.product_name}">${p.product_name}</h6>
+                                            <p class="card-text text-muted" style="margin-top:auto">${p.brand_name || ''}</p>
+                                            <div class="d-flex" style="gap:.5rem;">
+                                                <a class="btn btn-outline-primary btn-sm" href="/view_product/${p._id}">Xem</a>
+                                                <button class="btn btn-primary btn-sm" onclick="addToCart('${p._id}')">Thêm</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                grid.appendChild(col);
+                        });
+                }).catch(()=>{});
+        })();
 })
