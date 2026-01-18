@@ -41,6 +41,7 @@ const orderRouter = require('./routes/orderRouter');
 const cartRouter = require('./routes/cartRouter');
 const productSearchRouter = require('./routes/productSearchRoute');
 const reviewRouter = require('./routes/reviewRouter');
+const recommendationRouter = require('./routes/recommendationRouter');
 
 
 //connect database
@@ -131,6 +132,7 @@ app.use('/cart', cartRouter);
 app.use('/orders', orderRouter);
 app.use('/products', productSearchRouter);
 app.use('/reviews', reviewRouter);
+app.use('/recommendations', recommendationRouter);
 app.use('/', newsRouter);
 app.use('/chat', chatRouter);
 
