@@ -28,6 +28,18 @@
   </div>
 
   <hr>
+  {{#if userData}}
+  <div class="h3 text-center fw-bold">Gợi ý cho bạn</div>
+  <hr>
+  <div id="recHomeSection" class="row g-3 g-md-4">
+    <div class="col-12">
+      <div id="recHomeGrid" class="row g-3 g-md-4"></div>
+      <div id="recHomeEmpty" class="text-muted" style="display:none;">Chưa có gợi ý phù hợp.</div>
+    </div>
+  </div>
+  {{/if}}
+
+  <hr>
   <div class="h3 text-center fw-bold">Đồng hồ</div>
   <hr>
 

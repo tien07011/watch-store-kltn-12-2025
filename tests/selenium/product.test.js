@@ -86,7 +86,29 @@ describe('Selenium smoke tests - products', function () {
     expect(html).to.be.a('string');
   });
 
-  
+it('TC_LOGIN_SUCCESS - Đăng nhập thành công', async function () {
+  await driver.get('http://127.0.0.1:4500/login');
+
+  await driver.findElement(By.id('form3Example3'))
+    .sendKeys('ThuanToan.Vuong@gmail.com');
+
+  await driver.findElement(By.id('form3Example4'))
+    .sendKeys('123456');
+
+  await driver.findElement(By.css('button[type="submit"]')).click();
+
+  // ✅ Đợi URL KHÔNG còn /login
+  await driver.wait(async () => {
+    const url = await driver.getCurrentUrl();
+    return !url.includes('/login');
+  }, 10000, 'Login success but URL not changed');
+
+  const currentUrl = await driver.getCurrentUrl();
+  console.log('✅ Login success, current URL:', currentUrl);
+
+  expect(currentUrl).to.not.include('/login');
+});
+
 
   after(async function () {
     if (driver) await driver.quit();
